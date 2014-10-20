@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="./template/template-externo.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+	<ui:define name="corpo">
+		<h:form id="form">
+			<h:outputStylesheet name="index.css" library="css" />
+			<p:messages id="msgGeneralizada" for="login" globalOnly="true" closable="true"/>
+			<p:messages id="msg" closable="true"/>
+			
+			<p:panel styleClass="padding: 0;">
+				<p id="titulos_sgi" align="center">Bem Vindo ao Sistema	Gerenciador de Imóveis</p>
+			</p:panel>
+
+			<div align="center">
+				<p:panel id="panel">
+					<h:panelGrid style="width:100%;" id="grid">
+						<p:row>
+							<p:column>
+								<p:focus for="login" />
+								<div class="campos_botoes_formulario" align="center">
+									<h:outputText style="margin-top 15px;" value="LOGIN: " />
+									<p:inputText value="#{mbUsuario.usuario.login}" id="login"
+										required="true" requiredMessage="Login não informado"
+										label="Login" style="width: 20%; text-transform: uppercase;" onfocus="true"/>
+								</div>
+
+								<div class="campos_botoes_formulario" align="center">
+									<h:outputText value="SENHA: " />
+									<p:password value="#{mbUsuario.usuario.senha}" id="senha" required="true"
+										requiredMessage="Senha não Informada"
+										title="Informe Sua Senha" maxlength="30" style="width: 20%;">
+									</p:password>
+								</div>
+
+
+								<p class="box_apresentacao_rodape_botao" align="left" style="margin-bottom: 15px;">
+									<p:commandButton value="Entrar" icon="ui-icon-circle-check" action="#{mbUsuario.verificaTipoUsuario}" update="panel,grid,msg" />
+								</p>
+								
+								<p class="box_apresentacao_rodape_botao" align="right" style="margin-bottom: 15px;">
+									<p:commandButton id="buscaSenha" action="#{mbUsuario.inicializa}" oncomplete="senhaDialog.show()" title="Recuparar Senha" value="Senha" icon="ui-icon-key" />
+								</p>
+
+							</p:column>
+						</p:row>
+					</h:panelGrid>
+				</p:panel>
+			</div>
+
+			<p:panel styleClass="padding: 0;">
+				<p id="titulos_sgi" align="center">Atenção</p>
+			</p:panel>
+
+			<div align="center">
+				<p:panel>
+					<h:panelGrid>
+						<p:row>
+							<p:column colspan="6">
+								<h:panelGroup>
+									<div class="apresentacao_texto" align="center">
+										<strong>ACESSO AOS SISTEMAS: </strong> 
+										<p />
+										 - É necessário que o usuário informe o seu login e senha.
+									</div>
+									
+									<div class="apresentacao_texto" align="center">
+										<strong>ESQUECEU A SENHA: </strong> 
+										<p />
+										 - Clique no botão "Senha" e informe os dados nescessários para recuperação do mesmo.
+									</div>
+						
+								</h:panelGroup>
+							</p:column>
+						</p:row>
+					</h:panelGrid>
+				</p:panel>
+			</div>
+		</h:form>
+
+		<h:form id="formDialog">
+			<p:growl id="mensagemModal" life="4500"/>
+		
+			<p:dialog header="Recuperar Senha" widgetVar="senhaDialog"
+				resizable="false" id="senhaModal" showEffect="fade"
+				hideEffect="fade" modal="true" draggable="true" maximizable="false"
+				minimizable="false" appendToBody="false" dynamic="true" >
+		        <p:ajax event="close" listener="#{mbUsuario.inicializa}" />  
+		
+				<h:panelGrid id="gridModal">
+		
+					<div class="campos_botoes_formulario" align="center">
+						<h:outputText value="LOGIN: " />
+						<p:inputText id="loginModal" value="#{mbUsuario.usuario.login}" style="width: 95%;" />
+					</div>
+
+					<div class="campos_botoes_formulario" align="center">
+						<h:outputText value="CPF: " />
+						<p:inputMask mask="999.999.999-99" value="#{mbUsuario.usuario.cpf}" id="cpfInbox" label="Informe seu CPF" maxlength="11" style="width: 95%;" converter="cpfConverter" />
+					</div>
+					
+					<div class="campos_botoes_formulario" align="center">
+						<h:outputText value="DATA NASCIMENTO: " />
+						<p:inputMask mask="99/99/9999" converter="dataConverter" value="#{mbUsuario.usuario.dataNascimento}" id="dtNascimento" required="true" requiredMessage="Informar Data de Nascimento" label="Data de Nascimento" style="width: 95%;" />
+					</div>
+
+					<p class="box_apresentacao_rodape_botao" align="center">
+						<p:commandButton id="btSenha" action="#{mbUsuario.buscaLogin}" icon="ui-icon-search" update="gridModal,mensagemModal" value="buscar" styleClass="box_apresentacao_rodape_botao" />
+					</p>
+					
+					<div class="campos_botoes_formulario" align="center">
+						<h:outputText value="SENHA: " />
+						<p:inputText value="#{mbUsuario.usuario.senha}" id="senhaModalInbox" disabled="true"/>
+					</div>
+
+				</h:panelGrid>
+			</p:dialog>
+		</h:form>
+
+	</ui:define>
+	<f:facet name="footer" />
+</ui:composition>

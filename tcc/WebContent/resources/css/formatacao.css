@@ -1,0 +1,27 @@
+.tabela{
+    margin-top: 20px;
+    text-align: center;
+}
+
+.negrito{
+    font-weight: bold;
+}
+
+.tituloToolbar{
+    margin-top: 8px;
+    margin-left: 8px;
+    font-size: 16px;
+}
+
+.botaoCadastrar{
+    text-align: right;
+}
+
+.botaoAjuda{
+    margin-left: 5px;
+}
+
+/*Formata o tamanho dos componentes. Ex: calendar*/
+.ui-widget,.ui-widget .ui-widget { 
+    font-size: 12px !important; 
+}

@@ -1,0 +1,250 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/template/template-usuario.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<ui:define name="menu">
+		<p:menuitem value="Gerenciar Propostas" onclick="#{mbAuxAdm.telaVisualizarVendas()}"  icon="ui-icon-home" url="/paginas/auxiliarAdministrativo/listarVendas.jsf" />
+	</ui:define>
+			
+	<ui:define name="corpo">
+		<h:form id="formDataTable">
+			<h:outputStylesheet name="index.css" library="css" />
+			<h:outputStylesheet name="template-interno-style.css" library="css" />
+			
+	   	<p:messages closable="true" id="mensagem" autoUpdate="true" escape="true" />
+		<p style="padding-top:10px" />
+
+		<p:panel id="panel" styleClass="titulos_datatable"  header="APROVAÇÃO DE CLIENTES">
+	        <p:dataTable id="dataTable" var="var" value="#{mbAuxAdm.listados}" 
+	        	emptyMessage="Nenhuma unidade Reserva" 
+                paginator="true" rows="5" 
+                currentPageReportTemplate="TOTAL: #{mbAuxAdm.countReservaStatus}"
+                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" >
+	                
+	                <p:column headerText="CLIENTE" style="width: 15%; font-weight: bold; font-color: red;" filterBy="#{var.cliente.nome}" filterMatchMode="contains">
+						<h:outputText value="#{var.cliente.nome}" />
+					</p:column>
+		
+					<p:column headerText="UNIDADE" style="width: 15%; font-weight: bold;" filterBy="#{var.imovel.localizacaoImovel}" filterMatchMode="contains">
+						<h:outputText style="text-align:center;" value="#{var.imovel.localizacaoImovel}"/>
+					</p:column>
+					
+					<p:column headerText="CONSTRUTORA" style="width: 15%; font-weight: bold;" filterBy="#{var.construtora.nomeConstrutora}" filterMatchMode="contains">
+						<h:outputText style="text-align:center;" value="#{var.construtora.nomeConstrutora}"/>
+					</p:column>
+
+					<p:column headerText="EMPREENDIMENTO" style="width: 15%; font-weight: bold;" filterBy="#{var.empreendimento.nomeEmpreendimento}" filterMatchMode="contains">
+						<h:outputText style="text-align:center;" value="#{var.empreendimento.nomeEmpreendimento}"/>
+					</p:column>
+		
+					<p:column headerText="FINANCIAMENTO" style="width: 15% ;text-align:center; font-weight: bold;" filterBy="#{var.cliente.telefone.telefonePreferencial}">
+							<h:outputText converter="valorConverter" value="#{var.imovel.financiamento}" />
+					</p:column>
+		
+					<p:column headerText="RENDA CLIENTE" style="width: 15% ;text-align:center; font-weight: bold;" filterBy="#{var.cliente.telefone.telefonePreferencial}">
+							<h:outputText converter="valorConverter" value="#{var.cliente.rendaBruta}" />
+					</p:column>
+		
+					<p:column headerText="STATUS" style="width: 15%; font-weight: bold;" filterBy="#{var.stReserva}" filterMatchMode="contains">
+							<h:outputText value="#{var.stReserva}" />
+					</p:column>
+
+					<p:column headerText="OPÇÕES" style="font-weight: bold; width:11.3%; padding-bottom: 0px;text-align:center;" >
+			
+						<p:commandButton icon="ui-icon-closethick" oncomplete="bloquear.show()" title="Cancelar Venda"  >
+							<f:setPropertyActionListener value="#{var}" target="#{mbAuxAdm.reserva}" />  
+						</p:commandButton>
+						
+						<p:commandButton icon="ui-icon-check" oncomplete="aprovar.show()" title="Aprovar Venda" >
+							<f:setPropertyActionListener value="#{var}" target="#{mbAuxAdm.reserva}" />  
+						</p:commandButton>    
+				
+					</p:column>
+						
+
+                </p:dataTable>
+        	</p:panel>
+	   	</h:form>
+
+		<p:dialog resizable="false" id="modalExcluir" showEffect="drop"
+				  hideEffect="fade" modal="true" maximizable="drop"
+				  minimizable="false" appendToBody="true" closable="false"
+		 		  dynamic="true" header="Deseja Realmente não Aprovar Venda ?" widgetVar="bloquear" >	
+				  <h:form id="formDialog">
+					<div align="center">
+
+						<div class="campos_botoes_formulario">
+							<h:outputText id="motivoDesprova" value="Descreva o Motivo da não Aprovação."/>
+						</div>	
+		
+						<p:inputTextarea id="textArea" autoResize="true" cols="75" maxlength="400" value="#{mbAuxAdm.reserva.comentario}" />
+
+						<div class="campos_botoes_formulario">
+							<p:commandButton id="confirmar" value="Bloquear" oncomplete="bloquear.hide()" action="#{mbAuxAdm.comandoBloquearVenda}" update=":formDataTable" />
+				       		<p:commandButton immediate="true" ajax="false" id="cancelar" value="Voltar" onclick="bloquear.hide()" action="#{mbAuxAdm.telaVisualizarVendas}"/>   
+						</div>
+		       		</div>
+				  </h:form>
+		</p:dialog>
+		
+		<p:dialog resizable="false" id="modalVisualizar" showEffect="drop"
+				  hideEffect="fade" modal="true" maximizable="drop"
+				  minimizable="false" appendToBody="true" closable="false"
+		 		  dynamic="true" header="Deseja Reamente Aprovar Venda?" widgetVar="aprovar" >	
+				  <h:form id="formVisualizar">
+					<div align="center">
+					
+						<div class="campos_botoes_formulario">
+							<h:outputText id="motivoAprova" value="Descreva o Motivo da Aprovação. (Opcional)"/>
+						</div>	
+		
+						<p:inputTextarea id="textArea" autoResize="true" cols="75" maxlength="400" value="#{mbAuxAdm.reserva.comentario}"/>
+
+						<div class="campos_botoes_formulario">
+							<p:commandButton id="confirmar" value="Aprovar" oncomplete="aprovar.hide()" action="#{mbAuxAdm.comandoAprovarVenda}" update=":formDataTable"/>
+				       		<p:commandButton immediate="true" ajax="false" id="cancelar" value="Voltar" onclick="aprovar.hide()" action="#{mbAuxAdm.telaVisualizarVendas}"/>   
+						</div>		
+		       		</div>
+				  </h:form>
+		</p:dialog>
+		
+		
+<!-- 		<p:dialog resizable="false" id="modalVisualizarInformacoesReserva" showEffect="drop" -->
+<!-- 			  hideEffect="fade" modal="true" maximizable="drop" -->
+<!-- 			  minimizable="false" appendToBody="true" closable="true"  -->
+<!-- 	 		  dynamic="true" header="Informações do(a) Cliente #{mbAuxAdm.clienteReserva.nome}" widgetVar="modalVisualizarInformacoesReservaa" width="1200" height="610">	 -->
+<!-- 			<h:form id="modalVisualizarInformacoesReserva2"> -->
+<!-- 			<p:scrollPanel style="height:600px" >   -->
+			
+<!-- 			<div align="left" style="padding-top:10px" id="proponeteComprador"> -->
+<!-- 			<p:fieldset legend="Informações do Imóvel" id="inf"> -->
+<!-- 				<div class="campos_botoes_formulario"> -->
+<!-- 					<h:outputText style="margin-left:0px; margin-top 15px;" value="Proposta Nº: " /> -->
+<!-- 					<p:inputText disabled="true" value="#{mbAuxAdm.clienteReserva.id}" id="numeroProposta" style="width: 5%;"/> -->
+<!-- 				</div> -->
+				
+<!-- 				<div class="campos_botoes_formulario"> -->
+<!-- 					<h:outputText style="margin-left:0px; margin-top 15px;" value="Construtora: " /> -->
+<!-- 					<p:inputText disabled="true" value="#{mbAuxAdm.nomeConstrutora.nomeConstrutora}" id="nmConstrutora" style="width: 30%;"/> -->
+					
+<!-- 					<h:outputText style="margin-left:5px; margin-top 15px;" value="Empreendimento: " /> -->
+<!-- 					<p:inputText disabled="true" value="#{mbAuxAdm.nomeEmpreendimento.nomeEmpreendimento}" id="nmEmp" style="width: 30%;" /> -->
+
+<!-- 					<h:outputText style="margin-left:5px; margin-top 15px;" value="Unidade: " /> -->
+<!-- 					<p:inputText disabled="true" value="#{mbAuxAdm.imovelSelecionado.localizacaoImovel}" id="imovelselecionado" style="width: 4%;"/> -->
+<!-- 				</div> -->
+							
+<!-- 				<div class="campos_botoes_formulario"> -->
+<!-- 					<h:outputText style="margin-left:0px; margin-top 15px;" value="Valor do Imóvel: " /> -->
+<!-- 					<p:inputText disabled="true" value="#{mbAuxAdm.imovelSelecionado.valorImovel}" converter="valorConverter" id="vlImovel" style="width: 10%;"/> -->
+					
+<!-- 					<h:outputText style="margin-left:5px; margin-top 15px;" value="Percentual Imobiliária: " /> -->
+<!-- 					<p:inputText disabled="true" value="#{mbAuxAdm.imovelSelecionado.percentualSinal}" id="sinal" style="width: 14%;" /> -->
+<!-- 				</div>					 -->
+<!-- 			</p:fieldset> -->
+<!-- 		</div> -->
+		
+<!-- 		<div align="left" style="padding-top:10px" > -->
+<!-- 			<p:fieldset legend="1º Proponente" id="proponente"> -->
+<!-- 				<div class="campos_botoes_formulario"> -->
+<!-- 					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/> -->
+<!-- 					<h:outputText style="margin-left:0px; margin-top 15px;" value="Nome: " /> -->
+<!-- 					<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbAuxAdm.clienteReserva.nome}" id="nome" required="true" requiredMessage="Informar Nome" label="Nome" style="width: 52%;" maxlength="100" /> -->
+					
+<!-- 					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/> -->
+<!-- 					<h:outputText style="margin-left:0px; margin-top 15px;" value="Data de Nascimento: " /> -->
+<!-- 					<p:inputMask mask="99/99/9999" converter="dataConverter" value="#{mbAuxAdm.clienteReserva.dataNascimento}" id="dtNascimento" required="true" requiredMessage="Informar Data de Nascimento" label="Data de Nascimento" style="width: 80px;" /> -->
+<!-- 			    </div> -->
+
+<!-- 				<div class="campos_botoes_formulario"> -->
+<!-- 					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/> -->
+<!-- 					<h:outputText style="margin-left:0px; margin-top 15px;" value="RG: " /> -->
+<!-- 					<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbAuxAdm.clienteReserva.rg}" id="rg" required="true" requiredMessage="Informar RG" label="RG" style="width: 8%;margin-top 15px;" maxlength="40"/> -->
+					
+<!-- 					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/> -->
+<!-- 					<h:outputText style="margin-left:0px; margin-top 15px;" value="CPF: " /> -->
+<!-- 					<p:inputMask mask="999.999.999-99" converter="cpfConverter" value="#{mbAuxAdm.clienteReserva.cpf}" id="cpf" required="true" requiredMessage="Informar CPF" label="CPF" style="width: 10%;"/> -->
+					
+<!-- 					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/> -->
+<!-- 					<h:outputText style="margin-left:0px; margin-top 15px;" value="Sexo: " /> -->
+<!-- 					<p:selectOneMenu id="sexo" required="true" requiredMessage="Informar Sexo" styleClass="campo_comboBox" value="#{mbAuxAdm.clienteReserva.sexo}" > -->
+<!-- 						<f:selectItem itemLabel="Selecione..." itemValue=""/> -->
+<!-- 						<f:selectItems value="#{mbAuxAdm.opcoesSexo}" var="opcao" itemLabel="#{opcao.descricao}" itemValue="#{opcao.codigo}"  noSelectionValue="Selecione"  /> -->
+<!-- 					</p:selectOneMenu> -->
+
+<!-- 					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/> -->
+<!-- 					<h:outputText style="margin-left:0px; margin-top 15px;" value="Estado Civil: " /> -->
+<!-- 					<p:selectOneMenu id="estadoCivil" required="true" requiredMessage="Informar Estado Civil" styleClass="campo_comboBox" value="#{mbAuxAdm.clienteReserva.statusCivil}" > -->
+<!-- 						<f:selectItem itemLabel="Selecione..." itemValue=""/> -->
+<!-- 						<f:selectItems value="#{mbAuxAdm.opcoesEstadoCivil}" var="opcao" itemLabel="#{opcao.descricao}" itemValue="#{opcao.codigo}"  noSelectionValue="Selecione"  /> -->
+<!-- 					</p:selectOneMenu> -->
+
+<!-- 					<h:outputText style="margin-left:12px; margin-top: 15px;" value="2ª Comprador? " /> -->
+<!-- 					<p:selectBooleanButton onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" value="#{mbAuxAdm.comprador}" id="comprador" styleClass="campo_comboBox" style="width: 6%;"> -->
+<!-- 				            <p:ajax update="proponente2"/>   -->
+<!-- 					</p:selectBooleanButton> -->
+
+<!-- 				</div> -->
+				
+<!-- 				<div class="campos_botoes_formulario" > -->
+<!-- 					<h:outputText style="margin-left:10px;margin-top 15px;"/> -->
+<!-- 					<h:outputText style="margin-left:0px; margin-top: 15px;" value="E-Mail: " /> -->
+<!-- 					<p:inputText value="#{mbAuxAdm.clienteReserva.email}" id="email" required="true" requiredMessage="Informar Email" label="Email" style="width: 32.2%;" validator="emailValidator" maxlength="60"/> -->
+					
+<!-- 					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/> -->
+<!-- 					<h:outputText style="margin-left:0px; margin-top 15px;" value="Endereço: " /> -->
+<!-- 					<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbAuxAdm.clienteReserva.endereco.endereco}" id="endereco" required="true" requiredMessage="Informar Endereço" label="Endereço" style="width: 40.5%;" maxlength="50"/> -->
+<!-- 				</div> -->
+									
+<!-- 				<div class="campos_botoes_formulario"> -->
+<!-- 					<h:outputText style="margin-left:10px; margin-top 15px;" value="Complemento: " /> -->
+<!-- 					<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbAuxAdm.clienteReserva.endereco.complemento}" id="complemento" requiredMessage="Informar Complemento" label="Complemento" style="width: 23.3%;" maxlength="50"/> -->
+					
+<!-- 					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>						 -->
+<!-- 					<h:outputText style="margin-left:0px; margin-top 15px;" value="Bairro: " /> -->
+<!-- 					<p:autoComplete completeMethod="#{mbAdmGeral.comandoAutoCompleteBairro()}" size="25"  onblur="this.value = this.value.toUpperCase();" value="#{mbAuxAdm.clienteReserva.endereco.bairro.descricaoBairro}" id="bairro" required="true" requiredMessage="Informar Bairro" label="Bairro" style="width: 25%;" maxlength="50"/> -->
+					
+<!-- 					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>						 -->
+<!-- 					<h:outputText style="margin-left:0px; margin-top 15px;" value="CEP: " /> -->
+<!-- 					<p:inputMask mask="99.999-999" converter="cepConverter" value="#{mbAuxAdm.clienteReserva.endereco.cep}" id="cep" required="true" requiredMessage="Informar CEP" label="CEP" style="width: 17.5%;"/> -->
+<!-- 				</div> -->
+
+<!-- 				<div class="campos_botoes_formulario" style="width: 40%"> -->
+<!-- 					<h:outputText style="margin-left:8px;margin-top 15px; color: Red;" value="*"/>						 -->
+<!-- 					<h:outputText style="margin-left:0px; margin-top 15px;" value="Renda: " /> -->
+<!-- 					<p:inputText converter="valorConverter" value="#{mbAuxAdm.clienteReserva.renda}" id="renda" required="true" requiredMessage="Informar Renda" label="Renda" style="width: 15%;" maxlength="20" onkeypress="mascara(this, valor);" /> -->
+
+<!-- 					<h:outputText style="margin-left:12px; margin-top: 15px;" value="Possui FGTS: " /> -->
+<!-- 					<p:selectBooleanButton onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" value="#{mbAuxAdm.fgts}" id="fgts" styleClass="campo_comboBox"/> -->
+<!-- 				</div> -->
+								
+<!-- 				<div class="campos_botoes_formulario"> -->
+<!-- 					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/> -->
+<!-- 					<h:outputText style="margin-left:0px;margin-top 15px;" value="Telefone Preferencial: " /> -->
+<!-- 					<p:inputMask mask="99" value="#{mbAuxAdm.clienteReserva.telefone.dddPreferencial}" id="dddPreferencial" maxlength="2" styleClass="campo_ddd" style="margin-left:13px;" title="Informe o DDD" required="true" requiredMessage="Informar DDD Preferêncial" /> -->
+					
+<!-- 					<p:inputMask mask="9999-9999" converter="telefoneConverter" value="#{mbAuxAdm.clienteReserva.telefone.telefonePreferencial}" id="telPreferencial" title="Informe o Nª de Telefone" required="true" requiredMessage="Informar Telefone Preferêncial" label="Nome" styleClass="campo_telefone" style="width: 8%"/> -->
+<!-- 				</div>	 -->
+
+<!-- 				<div class="campos_botoes_formulario"> -->
+<!-- 					<h:outputText style="margin-left:15px;margin-top 15px;" value="Telefone Recado: " /> -->
+<!-- 					<p:inputMask mask="99" value="#{mbAuxAdm.clienteReserva.telefone.dddCoorporativo}" id="dddCor" maxlength="2" styleClass="campo_ddd" style="margin-left:43px;" /> -->
+					
+<!-- 					<p:inputMask mask="9999-9999" converter="telefoneConverter" value="#{mbAuxAdm.clienteReserva.telefone.telefoneCoorporativo}" id="telCorp" title="Informe o Nª de Telefone" styleClass="campo_telefone" style="width: 8%"/> -->
+<!-- 				</div>	 -->
+
+<!-- 		</p:fieldset> -->
+<!-- 		</div> -->
+<!-- 		</p:scrollPanel> -->
+<!-- 		</h:form> -->
+<!-- 		</p:dialog> -->
+		
+	  </ui:define>
+	<f:facet name="footer" />
+</ui:composition>

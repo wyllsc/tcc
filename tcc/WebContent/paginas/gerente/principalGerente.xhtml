@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/template/template-usuario.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<ui:define name="menu">
+		<p:menuitem value="Corretor" 				onclick="#{mbGerente.telaGerenciarCorretor()}" icon="ui-icon-home" url="/paginas/gerente/corretor/listarCorretor.jsf" />
+		<p:menuitem value="Construtora" 			onclick="#{mbGerente.telaGerenciarConstrutora()}" icon="ui-icon-home" url="/paginas/gerente/construtora/listarConstrutora.jsf" />
+	</ui:define>
+		
+	<ui:define name="corpo">
+		<h:form id="form">
+			<h:outputStylesheet name="index.css" library="css" />
+			<h:outputStylesheet name="template-interno-style.css" library="css" />
+			
+	    	<p:growl id="mensagem" life="4500"  />   
+	    	
+			<p:panel styleClass="padding: 0;">
+				<p id="titulos_sgi" align="center">Bem Vindo #{sessionScope.usuarioSessao}</p>
+			</p:panel>
+			
+			<p:panel>
+				<div class="apresentacao_texto">
+					<strong>FUNCIONALIDADES: </strong> 
+					<br />
+					PARA ACESSAR AS FUNCIONALIDADES DO SISTEMA, ULTILIZE O MENU LOCALIZADO A ESQUERDA DA TELA.
+				</div>
+				<br />
+				<div class="apresentacao_texto">
+					<strong>ALTERAR PERFIL: </strong> 
+					<br />
+					PARA ALTERAR O PERFIL ACESSE AS CONFIGURAÇÕES DO MENU, ALTERE FOTO DO PERFIL, DADOS PESSOAIS E LOGIN DE ACESSO AO SISTEMA.
+				</div>
+				<br />
+				<div class="apresentacao_texto">
+					<strong>SEGURANÇA: </strong> 
+					<br />
+					NÃO INFORME SEU USUÁRIO OU SENHA PARA NINGUEM POIS O MESMO É INTRANSFERÍVEL.
+				</div>
+				<br />
+				<div class="apresentacao_texto">
+					<strong>SAIR: </strong> 
+					<br />
+					PARA SAIR E RETORNAR A TELA PRINCIPAL DO SISTEMA, CLIQUE NO BOTÃO SAIR ABAIXO DO MENU NO CANTO INFERIOR ESQUERDO.
+				</div>
+				
+			</p:panel>
+		</h:form>
+	  </ui:define>
+	<f:facet name="footer" />
+</ui:composition>

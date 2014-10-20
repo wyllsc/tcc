@@ -1,0 +1,195 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/template/template-usuario.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<ui:define name="menu">
+		<p:menuitem value="Cadastrar Clientes" 	onclick="#{mbCorretor.telaGerenciarAgenda()}"  icon="ui-icon-home" url="/paginas/corretor/agenda/listarAgenda.jsf" />
+		<p:menuitem value="Propostas de Vendas"	onclick="#{mbCorretor.telaVisualizarVendas()}" icon="ui-icon-home" url="/paginas/corretor/vendas/listarVendas.jsf" />
+		<p:menuitem value="Imóveis Disponíveis"	onclick="#{mbCorretor.telaCatalogoImoveis()}"  icon="ui-icon-home" url="/paginas/corretor/catalogo/listarCatalogo.jsf" />
+	</ui:define>
+		
+	<ui:define name="corpo">
+	<script>  
+	  function mascara(o, f) 
+	  {  
+	      v_obj = o;  
+	      v_fun = f;  
+	      setTimeout("execmascara()", 1);  
+	  }  
+	
+	  function execmascara() 
+	  {  
+	      v_obj.value = v_fun(v_obj.value);  
+	  }  
+	
+	  function valor(v) 
+	  {  
+		   v = v.replace(/\D/g, "");  
+		   v = v.replace(/[0-9]{15}/, "invÃ¡lido");  
+		   v = v.replace(/(\d{1})(\d{11})$/, "$1.$2"); // coloca ponto antes dos ultimos 11 digitos  
+		   v = v.replace(/(\d{1})(\d{8})$/, "$1.$2"); // coloca ponto antes dos  ultimos 8 digitos  
+		   v = v.replace(/(\d{1})(\d{5})$/, "$1.$2"); // coloca ponto antes dos ultimos 5 digitos  
+		   v = v.replace(/(\d{1})(\d{1,2})$/, "$1,$2"); // coloca virgula antes dos ultimos 2 digitos  
+		   return v;  
+	   }  
+	</script>
+  	
+  	<h:outputStylesheet name="index.css" library="css" />
+	<h:outputStylesheet name="template-interno-style.css" library="css" />
+					
+
+	<div align="center">
+		<h:form id="formCadastro">
+		   	<p:messages closable="true" id="mensagem" autoUpdate="true" escape="true" />
+			<p style="padding-top:10px" />
+
+			<p:panel id="panelCadastro" styleClass="titulos_datatable"  header="#{mbCorretor.acao.toUpperCase()} CLIENTE " toggleable="true" collapsed="#{mbCorretor.acao.equals('Cadastrar')}" style="width:70% ">
+			<div align="center" style="text-align: left;">
+				<h:panelGrid id="grid">
+					<p:row>
+						<p:column>
+							<div class="campos_botoes_formulario" >
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Nome: " />
+								<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbCorretor.cliente.nome}" id="nome" required="true" requiredMessage="Informar Nome do Cliente" label="Nome do Cliente" style="width: 500px;" maxlength="100"/>
+						    
+								<h:outputText style="margin-left:5px; margin-top 15px;" value="Renda: " />
+								<p:inputText converter="valorConverter" value="#{mbCorretor.cliente.renda}" id="renda" label="Renda" style="width: 100px;" onkeypress="mascara(this, valor);" />
+						    </div>
+	
+							<div class="campos_botoes_formulario" >
+								<h:outputText style="margin-left:10px; margin-top 15px;" value="E-Mail: " />
+								<p:inputText value="#{mbCorretor.cliente.email}" id="email" label="Nome do Cliente" style="width: 50%;" maxlength="100"/>
+						    	
+								<h:outputText style="margin-left:5px; margin-top 15px;" value="Sexo: " />
+								<p:selectOneMenu id="sexo" styleClass="campo_comboBox" value="#{mbCorretor.cliente.sexo}" >
+									<f:selectItem itemLabel="Selecione..." itemValue=""/>
+									<f:selectItems value="#{mbCorretor.opcoesSexo}" var="opcao" itemLabel="#{opcao.descricao}" itemValue="#{opcao.codigo}"  noSelectionValue="Selecione"  />
+								</p:selectOneMenu>
+							</div>
+	
+							<div class="campos_botoes_formulario">
+								<h:outputText style="margin-left:10px;margin-top 15px;" value="Telefone Preferencial: " />
+								<p:inputMask mask="99" value="#{mbCorretor.cliente.telefone.dddPreferencial}" id="dddPreferencial" maxlength="2" styleClass="campo_ddd" style="margin-left:13px;" title="Informe o DDD"/>
+								<p:inputMask mask="9999-9999" converter="telefoneConverter" value="#{mbCorretor.cliente.telefone.telefonePreferencial}" id="telPreferencial" title="Informe o Nª de Telefone" label="Nome" styleClass="campo_telefone"/>
+							</div>	
+	
+							<div class="campos_botoes_formulario">
+								<h:outputText style="margin-left:10px;margin-top 15px;" value="Telefone Recado: " />
+								<p:inputMask mask="99" title="Informe o DDD" value="#{mbCorretor.cliente.telefone.dddRecado}" id="dddRecado" maxlength="2" styleClass="campo_ddd" style="margin-left:47px;"/>
+								<p:inputMask mask="9999-9999" converter="telefoneConverter" value="#{mbCorretor.cliente.telefone.telefoneRecado}" id="telRecado" label="Nome" styleClass="campo_telefone"/>
+							</div>	
+							
+							<div class="campos_botoes_formulario">
+								<h:outputText style="margin-left:10px;" value="Observação: " />
+								<p:inputTextarea id="textArea" autoResize="true" cols="75" maxlength="400" value="#{mbCorretor.cliente.observacao}"/>
+							</div>					
+						</p:column>
+					</p:row>
+				</h:panelGrid>
+			</div>			
+			<p class="botao_alinhamento_direito" align="right">
+				<p:commandButton ajax="false" id="saveOrUpdateImovel" action="#{mbCorretor.comandoSalvarClientePotencial}" icon="ui-icon-plusthick" value="#{mbCorretor.acao}" update="formDataList:panel:dataTable" />
+			</p>
+		</p:panel>
+	   </h:form>
+	</div>
+
+	<p style="padding-top:10px" />
+		
+	<h:form id="formDt">		
+		<p:panel id="panel" styleClass="titulos_datatable"  header="CLIENTES CADASTRADOS"  >
+			<p:dataTable id="dtTable" value="#{mbCorretor.listaClientes}" var="var" emptyMessage="NENHUM CLIENTE CADASTRADO." paginator="true" rows="5"  
+                	currentPageReportTemplate="TOTAL: #{mbCorretor.countClientes}" 
+                	paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" >
+
+				<p:column headerText="NOME" style="width: 15%; font-weight: bold; font-color: red;" filterBy="#{var.nome}" filterMatchMode="contains">
+					<h:outputText value="#{var.nome}" />
+				</p:column>
+	
+				<p:column headerText="SEXO" style="width: 15%; font-weight: bold;" filterBy="#{var.descricaoStatus}" filterMatchMode="contains">
+					<h:outputText style="text-align:center;" value="#{var.descricaoStatus}"/>
+				</p:column>
+	
+				<p:column headerText="TELEFONE" style="width: 15% ;text-align:center; font-weight: bold;"  filterMatchMode="contains"
+				filterBy="#{var.telefone.telefonePreferencial} #{var.telefone.telefoneCoorporativo} #{var.telefone.telefoneRecado} #{var.telefone.dddCoorporativo} #{var.telefone.dddPreferencial} #{var.telefone.dddRecado}">
+					<div>
+						<h:outputText converter="dddConverter" value="#{var.telefone.dddPreferencial}" />
+						<h:outputText converter="telefoneConverter" value="#{var.telefone.telefonePreferencial}" />
+					</div>
+					
+					<div>
+						<h:outputText converter="dddConverter" value="#{var.telefone.dddCoorporativo}" />
+						<h:outputText converter="telefoneConverter" value="#{var.telefone.telefoneCoorporativo}" />
+					</div>
+					
+					<div>
+						<h:outputText converter="dddConverter" value="#{var.telefone.dddRecado}" />
+						<h:outputText converter="telefoneConverter" value="#{var.telefone.telefoneRecado != null? var.telefone.telefoneRecado : null}" />		
+					</div>
+				</p:column>
+								
+				<p:column headerText="EMAIL" style="font-weight: bold; width:27%;" filterBy="#{var.email}" filterMatchMode="contains">
+					<h:outputText value="#{var.email}" style="font-size: 11.3px" />
+				</p:column>
+				
+				<p:column headerText="RENDA" style="width: 2%; font-weight: bold;text-align:center" filterBy="#{var.renda}" filterMatchMode="contains">
+					<h:outputText value="#{var.renda}"  converter="valorConverter" />
+				</p:column>
+				
+				<p:column headerText="OPÇÕES" style="font-weight: bold; width:11.3%; padding-bottom: 0px;text-align:center;" >
+				
+					<p:commandButton icon="ui-icon-bookmark" oncomplete="visualizar.show()" title="Visualizar Observação" action="#{mbCorretor.comandoVisualizar}" >
+						<f:setPropertyActionListener value="#{var}" target="#{mbCorretor.cliente}" />  
+					</p:commandButton>
+					
+					<p:commandButton icon="ui-icon-gear" title="Editar Cliente" update="dtTable,:formCadastro" action="#{mbCorretor.comandoAlterarLabel}">
+						<f:setPropertyActionListener value="#{var}" target="#{mbCorretor.cliente}" />  
+					</p:commandButton>  
+					  
+					<p:commandButton icon="ui-icon-closethick" title="Excluir Cliente" oncomplete="popup.show()" update="dtTable" disabled="#{var.statusReserva == true}">
+						<f:setPropertyActionListener value="#{var}" target="#{mbCorretor.cliente}" />  
+					</p:commandButton>  
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+		
+	<p:dialog resizable="false" id="modalExcluir" showEffect="drop"
+			  hideEffect="fade" modal="true" maximizable="drop"
+			  minimizable="false" appendToBody="true" closable="false"
+	 		  dynamic="true" header="Deseja Realmente Excluir ?" widgetVar="popup" >	
+			  <h:form id="formDialog">
+				<div align="center">
+					<p:commandButton id="confirmar" value="Sim" oncomplete="popup.hide()" action="#{mbCorretor.comandoExcluirCliente()}" update=":formDt:dtTable" />
+		       		<p:commandButton id="cancelar" value="Não" onclick="popup.hide()" action="#{mbCorretor.inicializa}"/>   
+	       		</div>
+			  </h:form>
+	</p:dialog>
+	
+	<p:dialog resizable="false" id="modalVisualizar" showEffect="drop"
+			  hideEffect="fade" modal="true" maximizable="drop"
+			  minimizable="false" appendToBody="true" closable="false"
+	 		  dynamic="true" header="Observação do Cliente #{mbCorretor.cliente.nome}" widgetVar="visualizar" width="800">	
+			  <h:form id="formVisualizar">
+				<div align="center">
+					<p:inputTextarea id="txt" autoResize="true" cols="75" maxlength="400" disabled="true" value="#{mbCorretor.cliente.observacao}"/>
+
+					<p class="botao_alinhamento_direito" align="right">
+						<p:commandButton id="cancelar" value="Voltar" oncomplete="visualizar.hide()" ajax="false" action="#{mbCorretor.telaGerenciarAgenda}" />
+    				</p>	
+	       		</div>
+			  </h:form>
+	</p:dialog>
+
+		
+  	
+  	</ui:define>
+	<f:facet name="footer" />
+</ui:composition>

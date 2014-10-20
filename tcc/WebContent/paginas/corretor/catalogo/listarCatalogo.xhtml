@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/template/template-usuario.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<ui:define name="menu">
+		<p:menuitem value="Cadastrar Clientes" 	onclick="#{mbCorretor.telaGerenciarAgenda()}"  icon="ui-icon-home" url="/paginas/corretor/agenda/listarAgenda.jsf" />
+		<p:menuitem value="Propostas de Vendas"	onclick="#{mbCorretor.telaVisualizarVendas()}" icon="ui-icon-home" url="/paginas/corretor/vendas/listarVendas.jsf" />
+		<p:menuitem value="Imóveis Disponíveis"	onclick="#{mbCorretor.telaCatalogoImoveis()}"  icon="ui-icon-home" url="/paginas/corretor/catalogo/listarCatalogo.jsf" />
+	</ui:define>
+		
+	<ui:define name="corpo">
+
+	<h:form id="formDataList">
+		<h:outputStylesheet name="index.css" library="css" />
+		<h:outputStylesheet name="template-interno-style.css" library="css" />
+			
+		<p:messages closable="true" id="mensagem" autoUpdate="true" escape="true"/>
+		
+		<p style="padding-top:10px" />
+	
+	<div align="center">
+		<p:panel id="panelFiltros" header="FILTRO PARA PESQUISA DOS IMÓVEIS" style="width:50%">
+		<div align="left">
+			<p style="padding-top:10px" />
+				<h:outputText value="Construtora:" style="margin-right: 49px; font-weight: bolder;margin-left: 20%;"/>
+				<p:selectOneMenu  id="construtora" required="true" requiredMessage="Informar Construtora" styleClass="campo_comboBox" value="#{mbCorretor.idConstrutora}">
+					<f:selectItem  itemLabel="Selecione..." itemValue="null" noSelectionOption="true"/>
+					<f:selectItems value="#{mbCorretor.listaConstrutora}" var="opcao" itemLabel="#{opcao.nomeConstrutora}" itemValue="#{opcao.id}"/>
+		            <p:ajax update="empreendimento" listener="#{mbCorretor.renderizaComboEmpreendimento}"/>  
+	    		</p:selectOneMenu>
+				
+			<p style="padding-top:10px" />
+				
+				<h:outputText value="Empreendimento:" style="margin-right: 15px; font-weight: bolder; margin-left: 20%;"/>
+				<p:selectOneMenu id="empreendimento" required="true" requiredMessage="Informar Empreendimento" styleClass="campo_comboBox" value="#{mbCorretor.idEmpreedimento}" >
+					<f:selectItem itemLabel="Selecione..." itemValue="null"/>
+					<f:selectItems value="#{mbCorretor.listaEmpreendimento}" var="opcao" itemLabel="#{opcao.nomeEmpreendimento}" itemValue="#{opcao.id}"/>
+					<p:ajax update=":formDataTable:dataTable" listener="#{mbCorretor.renderizaGrid}"/>
+				</p:selectOneMenu>	
+			<p style="padding-top:10px" />	
+		</div>
+		</p:panel>
+	</div>	
+  		<p style="padding-top:10px" />
+  		<p style="padding-top:10px" />
+	</h:form>
+	
+	<h:form id="formDataTable">
+	
+		<p:panel id="panel" styleClass="titulos_datatable"  header="UNIDADES DISPONÍVEIS">
+	        <p:dataTable id="dataTable" var="unidade" value="#{mbCorretor.listaImoveis}" emptyMessage="Nenhuma Unidade Disponível no Momento" 
+                paginator="true" rows="5" currentPageReportTemplate="TOTAL: #{mbCorretor.countImovel}"
+                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" >
+	                
+	                <p:column headerText="Unidade" style="width: 15%; font-weight: bold; font-color: red;" filterBy="#{unidade.localizacaoImovel}" filterMatchMode="contains">
+						<h:outputText value="#{unidade.localizacaoImovel}" />
+					</p:column>
+		
+					<p:column headerText="Posicionamento" style="width: 15%; font-weight: bold;" filterBy="#{unidade.posicaoDoImovel}" filterMatchMode="contains">
+						<h:outputText style="text-align:center;" value="#{unidade.posicaoDoImovel}"/>
+					</p:column>
+		
+					<p:column headerText="Metragem" style="width: 15% ;text-align:center; font-weight: bold;" filterBy="#{unidade.areaComum} #{unidade.areaComum}" filterMatchMode="contains">
+						<div>Comum: 
+							<h:outputText value="#{unidade.areaComum}"  converter="valorConverter"/>
+						</div>
+						<div>Total: 
+							<h:outputText value="#{unidade.areaTotal}" converter="valorConverter" />
+						</div>
+					</p:column>
+					
+					<p:column headerText="Tipologia" style="width: 2%; font-weight: bold;text-align:center" filterBy="#{unidade.qtdQuartos}" filterMatchMode="contains">
+						<h:outputText value="#{unidade.qtdQuartos} Quarto(s)" />
+					</p:column>
+					
+					<p:column headerText="Valor" style="font-weight: bold; width:27%;" filterBy="#{unidade.valorImovel}" filterMatchMode="contains">
+							<h:outputText value="#{unidade.valorImovel}"  converter="valorConverter" style="font-size: 13px" />
+		            </p:column>
+					
+					<p:column headerText="Percentual" style="font-weight: bold; width:27%;" filterBy="#{unidade.percentualSinal}" filterMatchMode="contains">
+						<h:outputText value="#{unidade.percentualSinal}" style="font-size: 13px" />
+					</p:column>
+					
+					<p:column headerText="Opções" style="font-weight: bold; width:11.3%; padding-bottom: 0px;text-align:center;" >
+						<p:commandButton icon="ui-icon-flag" title="Reservar Unidade" action="#{mbCorretor.telaReservarImovel()}">
+							<f:setPropertyActionListener value="#{unidade}" target="#{mbCorretor.imovelSelecionado}" />  
+						</p:commandButton>
+					</p:column>
+                </p:dataTable>
+        	</p:panel>
+	   	</h:form>
+	  </ui:define>
+	<f:facet name="footer" />
+</ui:composition>

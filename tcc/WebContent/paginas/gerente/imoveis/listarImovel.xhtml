@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/template/template-usuario.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+    xmlns:rich="http://richfaces.org/rich">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+	<ui:define name="menu">
+		<p:menuitem value="Corretor" 	onclick="#{mbGerente.telaGerenciarCorretor()}" icon="ui-icon-home" url="/paginas/gerente/corretor/listarCorretor.jsf" />
+		<p:menuitem value="Construtora" onclick="#{mbGerente.telaGerenciarConstrutora()}" icon="ui-icon-home" url="/paginas/gerente/construtora/listarConstrutora.jsf" />
+	</ui:define>	
+	
+	<ui:define name="corpo">
+	<script>  
+	  function mascara(o, f) 
+	  {  
+	      v_obj = o;  
+	      v_fun = f;  
+	      setTimeout("execmascara()", 1);  
+	  }  
+	
+	  function execmascara() 
+	  {  
+	      v_obj.value = v_fun(v_obj.value);  
+	  }  
+	
+	  function valor(v) 
+	  {  
+		   v = v.replace(/\D/g, "");  
+		   v = v.replace(/[0-9]{15}/, "invÃ¡lido");  
+		   v = v.replace(/(\d{1})(\d{11})$/, "$1.$2"); // coloca ponto antes dos ultimos 11 digitos  
+		   v = v.replace(/(\d{1})(\d{8})$/, "$1.$2"); // coloca ponto antes dos  ultimos 8 digitos  
+		   v = v.replace(/(\d{1})(\d{5})$/, "$1.$2"); // coloca ponto antes dos ultimos 5 digitos  
+		   v = v.replace(/(\d{1})(\d{1,2})$/, "$1,$2"); // coloca virgula antes dos ultimos 2 digitos  
+		   return v;  
+	   }  
+	</script>
+
+		<h:outputStylesheet name="index.css" library="css" />
+		<h:outputStylesheet name="template-interno-style.css" library="css" />
+					
+    	<p:messages closable="true" id="mensagem" autoUpdate="true" escape="true" />
+
+			<p style="padding-top:10px" />
+		
+		<div align="center">
+			<h:form id="formCadastro">
+			<p:panel id="panelCadastro" styleClass="titulos_datatable"  header="#{mbGerente.acao.toUpperCase()} IMÓVEL AO MPREENDIMENTO - #{mbGerente.empreendimento.nomeEmpreendimento}" toggleable="true" collapsed="#{mbGerente.acao.equals('Cadastrar')}" style="width:70% ">
+			<div align="center" style="text-align: left;">
+				<h:panelGrid id="grid">
+					<p:row>
+						<p:column>
+							<div class="campos_botoes_formulario" >
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Descricao: " />
+								<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbGerente.imovel.localizacaoImovel}" id="descricaoImovel" required="true" requiredMessage="Informar Número do Imóvel" label="Número do Imóvel" style="width: 29.8%;" maxlength="50"/>
+						    	<p:tooltip for="descricaoImovel" showEvent="focus" hideEvent="blur" >  
+									<h:outputText value="Informe a Descricão da Unidade" styleClass="campo_tooltip"/>
+								</p:tooltip>							
+							
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Posicionamento: " />
+								<p:selectOneMenu id="posicao" required="true" requiredMessage="Informar Posicionamento do Imóvel" styleClass="campo_comboBox" value="#{mbGerente.imovel.posicionamento}" >
+										<f:selectItem itemLabel="Selecione..." itemValue=""/>
+										<f:selectItems value="#{mbGerente.opcoesPosicao}" var="opcao" itemLabel="#{opcao.descricao}" itemValue="#{opcao.codigo}"  noSelectionValue="Selecione"  />
+								</p:selectOneMenu>
+							
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Quartos: " />
+								<p:selectOneMenu id="quartos" required="true" requiredMessage="Informar o Numero de Quartos" styleClass="campo_comboBox" value="#{mbGerente.imovel.qtdQuartos}" >
+										<f:selectItem itemLabel="Selecione..." itemValue=""/>
+										<f:selectItems value="#{mbGerente.opcoesQuartos}" var="opcao" itemLabel="#{opcao.descricao}" itemValue="#{opcao.codigo}"  noSelectionValue="Selecione"  />
+								</p:selectOneMenu>
+							</div>
+	
+							<div class="campos_botoes_formulario" >
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>						
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Àrea Comum: " />
+								<p:inputText converter="valorConverter" value="#{mbGerente.imovel.areaComum}" id="comum" required="true" requiredMessage="Informar a Área Comum da Unidade" label="Área Comum" style="width: 5.5%;" onkeypress="mascara(this, valor);" />
+						    	
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>						
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Área Total: " />
+								<p:inputText converter="valorConverter" value="#{mbGerente.imovel.areaTotal}" id="total" required="true" requiredMessage="Informar a Área Total da Unidade" label="Área Total" style="width: 5.5%;" onkeypress="mascara(this, valor);" />
+						    	
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>						
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Valor da Unidade: " />
+								<p:inputText converter="valorConverter" value="#{mbGerente.imovel.valorImovel}" id="valor" required="true" requiredMessage="Informar o Valor do Imóvel" label="Valor do Imóvel" style="width: 10%;" onkeypress="mascara(this, valor);" />
+	
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>						
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Percentual Imobiliária: " />
+								<p:inputText converter="valorConverter" value="#{mbGerente.imovel.percentualEmpresa}" id="percentual" required="true" requiredMessage="Informar o Percentual dá Imobiliária" label="Percentual" style="width: 4%;" onkeypress="mascara(this, valor);" />
+							</div>
+						</p:column>
+					</p:row>
+				</h:panelGrid>
+			</div>
+			<p class="botao_alinhamento_direito" align="right">
+				<p:commandButton ajax="false" id="saveOrUpdateImovel" action="#{mbGerente.comandoSalvarImoveis}" icon="ui-icon-plusthick" value="#{mbGerente.acao}" update="formDataList:panel:dataTable" />
+			</p>
+		</p:panel>
+		</h:form>
+		</div>
+			
+			<p style="padding-top:10px" />
+		
+		<h:form id="formDataList">
+			<p:panel id="panel" styleClass="titulos_datatable"  header="IMÓVEIS CADASTRADOS" toggleable="true">
+				<h:panelGrid style="width:100%;">
+	                <p:dataTable id="dataTable" var="unidade" value="#{mbGerente.listaImovel}" selection="#{mbGerente.selectedImovels}" rowKey="#{unidade.id}" emptyMessage="Nenhum Imóvel Cadastrado"
+	                paginator="true" rows="5"  
+                 	currentPageReportTemplate="TOTAL: #{mbGerente.contImovel}" 
+                 	paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" >
+
+		                <p:column selectionMode="multiple"/>
+		                
+		                <p:column headerText="Unidade" style="width: 15%; font-weight: bold; font-color: red;" filterBy="#{unidade.localizacaoImovel}" filterMatchMode="contains">
+							<h:outputText value="#{unidade.localizacaoImovel}" />
+						</p:column>
+			
+						<p:column headerText="Posicionamento" style="width: 15%; font-weight: bold;" filterBy="#{unidade.posicaoDoImovel}" filterMatchMode="contains">
+							<h:outputText style="text-align:center;" value="#{unidade.posicaoDoImovel}"/>
+						</p:column>
+			
+						<p:column headerText="Metragem" style="width: 15% ;text-align:center; font-weight: bold;" filterBy="#{unidade.areaComum} #{unidade.areaTotal}" filterMatchMode="contains">
+							<div>Comum: 
+								<h:outputText value="#{unidade.areaComum}"  converter="valorConverter"/>
+							</div>
+							<div>Total: 
+								<h:outputText value="#{unidade.areaTotal}" converter="valorConverter" />
+							</div>
+						</p:column>
+						
+						<p:column headerText="Tipologia" style="width: 2%; font-weight: bold;text-align:center" filterBy="#{unidade.qtdQuartos}" filterMatchMode="contains">
+							<h:outputText value="#{unidade.qtdQuartos} Quarto(s)" />
+						</p:column>
+						
+						<p:column headerText="Valor" style="font-weight: bold; width:27%;" filterBy="#{unidade.valorImovel}" filterMatchMode="contains">
+								<h:outputText value="#{unidade.valorImovel}"  converter="valorConverter" style="font-size: 13px" />
+			            </p:column>
+						
+						<p:column headerText="Percentual" style="font-weight: bold; width:27%;" filterBy="#{unidade.percentualSinal}" filterMatchMode="contains">
+							<h:outputText value="#{unidade.percentualSinal}" style="font-size: 13px" />
+						</p:column>
+						
+						<p:column headerText="Opções" style="font-weight: bold; width:11.3%; padding-bottom: 0px;text-align:center;" >
+							<p:commandButton icon="ui-icon-gear" title="Editar Unidade" action="#{mbGerente.comandoAlterarImovel}">
+								<f:setPropertyActionListener value="#{unidade}" target="#{mbGerente.imovel}" />  
+							</p:commandButton>    
+						</p:column>
+                    </p:dataTable>
+                </h:panelGrid>
+	            
+	            
+	            
+	            <p class="botao_alinhamento_direito" align="center">
+      				<p:commandButton ajax="false" immediate="true" id="voltarTelaPrincipal" action="#{mbGerente.telaGerenciarEmpreendimento}" value="Voltar" icon="ui-icon-arrowreturnthick-1-w"/>
+						<p:spacer width="20" height="20" /> 
+	            	<p:commandButton icon="ui-icon-tag" value="Alterar Valor(es)" oncomplete="alterar.show()" rendered="#{!empty mbGerente.listaImovel}"/>
+						<p:spacer width="20" height="20" /> 
+	    			<p:commandButton icon="ui-icon-closethick" value="Excluir Unidade(es)" oncomplete="popup.show()" rendered="#{!empty mbGerente.listaImovel}"/>
+    			</p>	
+
+            </p:panel>
+		</h:form>
+        
+        <p:dialog resizable="false" id="modalExcluir" showEffect="drop"
+				  hideEffect="fade" modal="true" maximizable="drop"
+				  minimizable="false" appendToBody="true" closable="false"
+		 		  dynamic="true" header="Deseja Realmente Excluir ?" widgetVar="popup" >	
+				  <h:form id="formDialog">
+					<div align="center">
+						<p:commandButton ajax="false" id="confirmar" value="Sim" oncomplete="popup.hide()" action="#{mbGerente.comandoExcluirImoveis}" update=":formDataList:panel:dataTable" />
+			       		<p:commandButton id="cancelar" value="Não" onclick="popup.hide()" action="#{mbGerente.inicializa}" update=":formDataList" />   
+		       		</div>
+				  </h:form>
+		</p:dialog>
+		
+		<p:dialog resizable="false" id="modalEditarValores" showEffect="drop"
+				  hideEffect="fade" modal="true" maximizable="drop"
+				  minimizable="false" appendToBody="true" closable="true"
+		 		  dynamic="true" header="Alterar Valores" widgetVar="alterar" >	
+				  <h:form id="formDialog2">
+					  <div align="center">
+					    <h:panelGrid style="width:100%;" id="grid">
+							<p:row>
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Valor(es) da(s) Unidade(s): " />
+								<p:inputText converter="valorConverter" value="#{mbGerente.valorImovelAlterado}" id="valor" style="width: 80px;" onkeypress="mascara(this, valor);" />
+							</p:row>
+							<p:row>
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Percentual Imobiliária: " />
+								<p:inputText converter="valorConverter" value="#{mbGerente.percentualEmpresaAlterado}" id="percentual" style="width: 22px;" onkeypress="mascara(this, valor);" />
+							</p:row>
+						  </h:panelGrid>
+						  
+						  <p:commandButton id="confirmar" value="Sim" onclick="" oncomplete="alterar.hide()" action="#{mbGerente.comandoAlterarVariasUnidade}" update=":formDataList" />
+				       	  <p:commandButton id="cancelar" value="Não" onclick="alterar.hide()"/>   
+			       	  </div>
+				  </h:form>
+		</p:dialog>
+		
+	  </ui:define>
+	<f:facet name="footer" />
+</ui:composition>

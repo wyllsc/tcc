@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="../resources/css/template-perfil-style.css" rel="stylesheet" type="text/css" />
+        <link href="../resources/css/formatacao.css" rel="stylesheet" type="text/css" />
+        <ui:insert name="titulo"><title>Facelets Template</title></ui:insert>
+    </h:head>
+
+    <h:body>
+
+        <p:layout fullPage="true">
+            
+            <p:layoutUnit position="north" size="60" resizable="false">
+                <ui:insert name="header">
+                    
+                </ui:insert>
+            </p:layoutUnit>  
+
+            <p:layoutUnit position="south" size="50" resizable="true">
+                <ui:insert name="footer">
+                    <h:panelGrid columns="2">
+                        <div id="footer">
+                            <h:form>
+                                <p:commandLink value="Página Inicial" action="perfil_aluno.xhtml"/>
+                                <h:outputLabel styleClass="footer_siae" value="SIAE - 2012 | versão 1.0 | 'A integração que todos precisamos'" />
+                            </h:form>
+                        </div>
+                    </h:panelGrid>
+                </ui:insert>
+            </p:layoutUnit>  
+
+            <p:layoutUnit position="west" size="230" style="font-style: italic;" header="Olá #{loginBean.usuario.nome}" collapsible="true">
+                    <ui:insert name="menu_esquerdo">
+                        <h:form>
+                            <h:panelGrid>
+                                <img src="#{loginBean.usuario.img_perfil}" width="185" height="185" alt="Perfil_aluno" style="margin-left: 17px"/>                                
+                            </h:panelGrid>
+                            
+                            <p:menu style="width: 215px;">
+                                <p:submenu label="Visualizar">
+                                    <p:menuitem value="Perfil" icon="ui-icon-person" action="perfil-aluno"/>
+                                    <p:menuitem value="Banco de vagas" icon="ui-icon-clipboard"/>
+                                </p:submenu>
+                                
+                                <p:submenu label="Atualizar">
+                                    <p:menuitem value="Dados Pessoais" icon="ui-icon-contact" action="atualizar-pessoal"/>
+                                    <p:menuitem value="Formação Acadêmica" icon="ui-icon-note"/>
+                                    <p:menuitem value="Histórico Profissional" icon="ui-icon-suitcase"/>
+                                    <p:menuitem value="Conhecimentos Específicos" icon="ui-icon-lightbulb"/>
+                                </p:submenu>
+                                
+                                <p:submenu label="Opções">
+                                    <p:menuitem value="Configurações" icon="ui-icon-gear"/>
+                                    <p:menuitem value="Sair" icon="ui-icon-power" action="#{loginBean.sair()}"/>
+                                </p:submenu>
+                             </p:menu>
+                        </h:form>
+                    </ui:insert>
+            </p:layoutUnit>  
+
+            <p:layoutUnit position="east" size="250" style="font-style: italic;" header="Fique atento!!!" resizable="true" collapsible="true">
+                <h:form>
+                    <ui:insert name="painel_direito">
+                            <h:panelGrid style="margin-top: 50px">
+                                <h:panelGroup>
+                                    <p:commandLink>
+                                        <img src="../resources/img/atencao.png" alt="confirme"/>
+                                        <h:outputText styleClass="vagas_abertas" value="Analista de Sistemas" />
+                                    </p:commandLink>
+                                </h:panelGroup>
+                                <br />
+                                <h:panelGroup>
+                                    <p:commandLink>
+                                        <img src="../resources/img/atencao.png" alt="confirme"/>
+                                        <h:outputText styleClass="vagas_abertas" value="Banco de Dados" />
+                                    </p:commandLink>
+                                </h:panelGroup>
+                                <br />
+                                <h:panelGroup>
+                                    <p:commandLink>
+                                        <img src="../resources/img/atencao.png" alt="confirme"/>
+                                        <h:outputText styleClass="vagas_abertas" value="Analista de Requisitos" />
+                                    </p:commandLink>
+                                </h:panelGroup>
+                                <br />
+                                <h:panelGroup>
+                                    <p:commandLink>
+                                        <img src="../resources/img/atencao.png" alt="confirme"/>
+                                        <h:outputText styleClass="vagas_abertas" value="Suporte e Redes" />
+                                    </p:commandLink>
+                                </h:panelGroup>
+                                <br />
+                                <h:panelGroup>
+                                    <p:commandLink>
+                                        <img src="../resources/img/atencao.png" alt="confirme"/>
+                                        <h:outputText styleClass="vagas_abertas" value="Analista de Sistemas" />
+                                    </p:commandLink>
+                                </h:panelGroup>
+                            </h:panelGrid>
+                        
+                            <p:stack icon="../resources/img/stack.png">
+                                <p:menuitem value="Orkut" icon="../resources/img/orkut.png" url="http://www.orkut.com/" />
+                                <p:menuitem value="Twitter" icon="../resources/img/twitter.png" url="https://twitter.com/" />
+                                <p:menuitem value="Linkedin" icon="../resources/img/linkedin.png" url="http://br.linkedin.com/" />
+                                <p:menuitem value="Projeção" icon="../resources/img/projecao.png" url="http://www.faculdadeprojecao.edu.br" />
+                                <p:menuitem value="Facebook" icon="../resources/img/facebook.png" url="http://pt-br.facebook.com/" />
+                            </p:stack>
+                    </ui:insert>
+                </h:form>
+            </p:layoutUnit>
+
+
+            <p:layoutUnit position="center">
+                <ui:insert name="corpo">Corpo</ui:insert>
+            </p:layoutUnit>  
+
+        </p:layout>
+
+    </h:body>
+</html>

@@ -1,0 +1,308 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/template/template-usuario.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<ui:define name="menu">
+		<p:menuitem value="Cadastrar Clientes" 	onclick="#{mbCorretor.telaGerenciarAgenda()}"  icon="ui-icon-home" url="/paginas/corretor/agenda/listarAgenda.jsf" />
+		<p:menuitem value="Propostas de Vendas"	onclick="#{mbCorretor.telaVisualizarVendas()}" icon="ui-icon-home" url="/paginas/corretor/vendas/listarVendas.jsf" />
+		<p:menuitem value="Imóveis Disponíveis"	onclick="#{mbCorretor.telaCatalogoImoveis()}"  icon="ui-icon-home" url="/paginas/corretor/catalogo/listarCatalogo.jsf" />
+	</ui:define>
+		
+	<ui:define name="corpo">
+		<h:form id="formDataTable">
+			<h:outputStylesheet name="index.css" library="css" />
+			<h:outputStylesheet name="template-interno-style.css" library="css" />
+			
+	    	<p:growl id="mensagem" life="4500"  />   
+
+		<p:panel id="panel" styleClass="titulos_datatable"  header="PROPOSTAS DE VENDAS">
+	        <p:dataTable id="dataTable" var="var" value="#{mbCorretor.listados}" emptyMessage="Nenhuma unidade Reservada" 
+                paginator="true" rows="5" currentPageReportTemplate="TOTAL: #{mbCorretor.countReservaStatus}"
+                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" >
+	                
+	                <p:column headerText="PROPONENTE COMPRADOR" style="width: 15%; font-weight: bold; font-color: red;" filterBy="#{var.cliente.nome}" filterMatchMode="contains">
+						<h:outputText value="#{var.cliente.nome}" />
+					</p:column>
+		
+					<p:column headerText="TELEFONE" style="width: 15% ;text-align:center; font-weight: bold;" 
+					filterBy="#{var.cliente.telefone.telefonePreferencial} #{var.cliente.telefone.telefoneCoorporativo} #{var.cliente.telefone.telefoneRecado} #{var.cliente.telefone.dddCoorporativo} #{var.cliente.telefone.dddPreferencial} #{var.cliente.telefone.dddRecado}">
+						<div>
+							<h:outputText converter="dddConverter" value="#{var.cliente.telefone.dddPreferencial}" />
+							<h:outputText converter="telefoneConverter" value="#{var.cliente.telefone.telefonePreferencial}" />
+						</div>
+						
+						<div>
+							<h:outputText converter="dddConverter" value="#{var.cliente.telefone.dddCoorporativo}" />
+							<h:outputText converter="telefoneConverter" value="#{var.cliente.telefone.telefoneCoorporativo}" />
+						</div>
+					</p:column>
+
+					<p:column headerText="UNIDADE" style="width: 15%; font-weight: bold;" filterBy="#{var.imovel.localizacaoImovel}" filterMatchMode="contains">
+						<h:outputText style="text-align:center;" value="#{var.imovel.localizacaoImovel}"/>
+					</p:column>
+					
+					<p:column headerText="EMPREENDIMENTO" style="width: 15%; font-weight: bold;" filterBy="#{var.empreendimento.nomeEmpreendimento}" filterMatchMode="contains">
+						<h:outputText style="text-align:center;" value="#{var.empreendimento.nomeEmpreendimento}"/>
+					</p:column>
+		
+					<p:column headerText="CONSTRUTORA" style="width: 15%; font-weight: bold;" filterBy="#{var.construtora.nomeConstrutora}" filterMatchMode="contains">
+						<h:outputText style="text-align:center;" value="#{var.construtora.nomeConstrutora}"/>
+					</p:column>
+		
+					<p:column headerText="STATUS" style="width: 15%; font-weight: bold;" filterBy="#{var.stReserva}" filterMatchMode="contains">
+						<p:commandButton icon="ui-icon-search" oncomplete="visualizarInformacoesReserva.show()" title="Informações da Reserva" action="#{mbCorretor.comandoVisualizar}" update=":modalVisualizarInformacoesReserva2">
+							<f:setPropertyActionListener value="#{var.cliente}" target="#{mbCorretor.clienteReserva}" />  
+							<f:setPropertyActionListener value="#{var.id}" target="#{mbCorretor.idReserva}" />  
+							<f:setPropertyActionListener value="#{var.imovel}" target="#{mbCorretor.imovelSelecionado}" />  
+							<f:setPropertyActionListener value="#{var.empreendimento}" target="#{mbCorretor.nomeEmpreendimento}" />  
+							<f:setPropertyActionListener value="#{var.construtora}" target="#{mbCorretor.nomeConstrutora}" />  
+						</p:commandButton>
+						<p:commandButton icon="ui-icon-bookmark" oncomplete="visualizar.show()" title="Visualizar Observação" action="#{mbCorretor.comandoVisualizar}" >
+							<f:setPropertyActionListener value="#{var}" target="#{mbCorretor.reserva}" />  
+						</p:commandButton>
+						 <p:spacer width="20" height="10" />
+						<h:outputText style="text-align:center;" value="#{var.stReserva}"/>																			
+					</p:column>
+
+                </p:dataTable>
+        	</p:panel>
+	   	</h:form>
+
+		<p:dialog resizable="false" id="modalVisualizarInformacoesReserva" showEffect="drop"
+			  hideEffect="fade" modal="true" maximizable="drop"
+			  minimizable="false" appendToBody="true" closable="true" 
+	 		  dynamic="true" header="Informações do(a) Cliente #{mbCorretor.clienteReserva.nome}" widgetVar="visualizarInformacoesReserva" width="1200" height="610">	
+			  <h:form id="modalVisualizarInformacoesReserva2">
+			<p:scrollPanel style="height:600px" >  
+			
+			<div align="left" style="padding-top:10px" id="proponeteComprador">
+			<p:fieldset legend="Informações do Imóvel" id="inf">
+				<div class="campos_botoes_formulario">
+					<h:outputText style="margin-left:0px; margin-top 15px;" value="Proposta Nº: " />
+					<p:inputText disabled="true" value="#{mbCorretor.clienteReserva.id}" id="numeroProposta" style="width: 5%;"/>
+				</div>
+				
+				<div class="campos_botoes_formulario">
+					<h:outputText style="margin-left:0px; margin-top 15px;" value="Construtora: " />
+					<p:inputText disabled="true" value="#{mbCorretor.nomeConstrutora.nomeConstrutora}" id="nmConstrutora" style="width: 30%;"/>
+					
+					<h:outputText style="margin-left:5px; margin-top 15px;" value="Empreendimento: " />
+					<p:inputText disabled="true" value="#{mbCorretor.nomeEmpreendimento.nomeEmpreendimento}" id="nmEmp" style="width: 30%;" />
+
+					<h:outputText style="margin-left:5px; margin-top 15px;" value="Unidade: " />
+					<p:inputText disabled="true" value="#{mbCorretor.imovelSelecionado.localizacaoImovel}" id="imovelselecionado" style="width: 4%;"/>
+				</div>
+							
+				<div class="campos_botoes_formulario">
+					<h:outputText style="margin-left:0px; margin-top 15px;" value="Valor do Imóvel: " />
+					<p:inputText disabled="true" value="#{mbCorretor.imovelSelecionado.valorImovel}" converter="valorConverter" id="vlImovel" style="width: 10%;"/>
+					
+					<h:outputText style="margin-left:5px; margin-top 15px;" value="Percentual Imobiliária: " />
+					<p:inputText disabled="true" value="#{mbCorretor.imovelSelecionado.percentualSinal}" id="sinal" style="width: 14%;" />
+				</div>					
+			</p:fieldset>
+		</div>
+		
+		<div align="left" style="padding-top:10px" >
+			<p:fieldset legend="1º Proponente" id="proponente">
+				<div class="campos_botoes_formulario">
+					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+					<h:outputText style="margin-left:0px; margin-top 15px;" value="Nome: " />
+					<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbCorretor.clienteReserva.nome}" id="nome" required="true" requiredMessage="Informar Nome" label="Nome" style="width: 52%;" maxlength="100" />
+					
+					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+					<h:outputText style="margin-left:0px; margin-top 15px;" value="Data de Nascimento: " />
+					<p:inputMask mask="99/99/9999" converter="dataConverter" value="#{mbCorretor.clienteReserva.dataNascimento}" id="dtNascimento" required="true" requiredMessage="Informar Data de Nascimento" label="Data de Nascimento" style="width: 80px;" />
+			    </div>
+
+				<div class="campos_botoes_formulario">
+					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+					<h:outputText style="margin-left:0px; margin-top 15px;" value="RG: " />
+					<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbCorretor.clienteReserva.rg}" id="rg" required="true" requiredMessage="Informar RG" label="RG" style="width: 8%;margin-top 15px;" maxlength="40"/>
+					
+					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+					<h:outputText style="margin-left:0px; margin-top 15px;" value="CPF: " />
+					<p:inputMask mask="999.999.999-99" converter="cpfConverter" value="#{mbCorretor.clienteReserva.cpf}" id="cpf" required="true" requiredMessage="Informar CPF" label="CPF" style="width: 10%;"/>
+					
+					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+					<h:outputText style="margin-left:0px; margin-top 15px;" value="Sexo: " />
+					<p:selectOneMenu id="sexo" required="true" requiredMessage="Informar Sexo" styleClass="campo_comboBox" value="#{mbCorretor.clienteReserva.sexo}" >
+						<f:selectItem itemLabel="Selecione..." itemValue=""/>
+						<f:selectItems value="#{mbCorretor.opcoesSexo}" var="opcao" itemLabel="#{opcao.descricao}" itemValue="#{opcao.codigo}"  noSelectionValue="Selecione"  />
+					</p:selectOneMenu>
+
+					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+					<h:outputText style="margin-left:0px; margin-top 15px;" value="Estado Civil: " />
+					<p:selectOneMenu id="estadoCivil" required="true" requiredMessage="Informar Estado Civil" styleClass="campo_comboBox" value="#{mbCorretor.clienteReserva.statusCivil}" >
+						<f:selectItem itemLabel="Selecione..." itemValue=""/>
+						<f:selectItems value="#{mbCorretor.opcoesEstadoCivil}" var="opcao" itemLabel="#{opcao.descricao}" itemValue="#{opcao.codigo}"  noSelectionValue="Selecione"  />
+					</p:selectOneMenu>
+
+					<h:outputText style="margin-left:12px; margin-top: 15px;" value="2ª Comprador? " />
+					<p:selectBooleanButton onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" value="#{mbCorretor.comprador}" id="comprador" styleClass="campo_comboBox" style="width: 6%;">
+				            <p:ajax update="proponente2"/>  
+					</p:selectBooleanButton>
+
+				</div>
+				
+				<div class="campos_botoes_formulario" >
+					<h:outputText style="margin-left:10px;margin-top 15px;"/>
+					<h:outputText style="margin-left:0px; margin-top: 15px;" value="E-Mail: " />
+					<p:inputText value="#{mbCorretor.clienteReserva.email}" id="email" required="true" requiredMessage="Informar Email" label="Email" style="width: 32.2%;" validator="emailValidator" maxlength="60"/>
+					
+					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+					<h:outputText style="margin-left:0px; margin-top 15px;" value="Endereço: " />
+					<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbCorretor.clienteReserva.endereco.endereco}" id="endereco" required="true" requiredMessage="Informar Endereço" label="Endereço" style="width: 40.5%;" maxlength="50"/>
+				</div>
+									
+				<div class="campos_botoes_formulario">
+					<h:outputText style="margin-left:10px; margin-top 15px;" value="Complemento: " />
+					<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbCorretor.clienteReserva.endereco.complemento}" id="complemento" requiredMessage="Informar Complemento" label="Complemento" style="width: 23.3%;" maxlength="50"/>
+					
+					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>						
+					<h:outputText style="margin-left:0px; margin-top 15px;" value="Bairro: " />
+					<p:autoComplete completeMethod="#{mbAdmGeral.comandoAutoCompleteBairro()}" size="25"  onblur="this.value = this.value.toUpperCase();" value="#{mbCorretor.clienteReserva.endereco.bairro.descricaoBairro}" id="bairro" required="true" requiredMessage="Informar Bairro" label="Bairro" style="width: 25%;" maxlength="50"/>
+					
+					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>						
+					<h:outputText style="margin-left:0px; margin-top 15px;" value="CEP: " />
+					<p:inputMask mask="99.999-999" converter="cepConverter" value="#{mbCorretor.clienteReserva.endereco.cep}" id="cep" required="true" requiredMessage="Informar CEP" label="CEP" style="width: 17.5%;"/>
+				</div>
+
+				<div class="campos_botoes_formulario" style="width: 40%">
+					<h:outputText style="margin-left:8px;margin-top 15px; color: Red;" value="*"/>						
+					<h:outputText style="margin-left:0px; margin-top 15px;" value="Renda: " />
+					<p:inputText converter="valorConverter" value="#{mbCorretor.clienteReserva.renda}" id="renda" required="true" requiredMessage="Informar Renda" label="Renda" style="width: 15%;" maxlength="20" onkeypress="mascara(this, valor);" />
+
+					<h:outputText style="margin-left:12px; margin-top: 15px;" value="Possui FGTS: " />
+					<p:selectBooleanButton onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" value="#{mbCorretor.fgts}" id="fgts" styleClass="campo_comboBox"/>
+				</div>
+								
+				<div class="campos_botoes_formulario">
+					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+					<h:outputText style="margin-left:0px;margin-top 15px;" value="Telefone Preferencial: " />
+					<p:inputMask mask="99" value="#{mbCorretor.clienteReserva.telefone.dddPreferencial}" id="dddPreferencial" maxlength="2" styleClass="campo_ddd" style="margin-left:13px;" title="Informe o DDD" required="true" requiredMessage="Informar DDD Preferêncial" />
+					
+					<p:inputMask mask="9999-9999" converter="telefoneConverter" value="#{mbCorretor.clienteReserva.telefone.telefonePreferencial}" id="telPreferencial" title="Informe o Nª de Telefone" required="true" requiredMessage="Informar Telefone Preferêncial" label="Nome" styleClass="campo_telefone" style="width: 8%"/>
+				</div>	
+
+				<div class="campos_botoes_formulario">
+					<h:outputText style="margin-left:15px;margin-top 15px;" value="Telefone Recado: " />
+					<p:inputMask mask="99" value="#{mbCorretor.clienteReserva.telefone.dddCoorporativo}" id="dddCor" maxlength="2" styleClass="campo_ddd" style="margin-left:43px;" />
+					
+					<p:inputMask mask="9999-9999" converter="telefoneConverter" value="#{mbCorretor.clienteReserva.telefone.telefoneCoorporativo}" id="telCorp" title="Informe o Nª de Telefone" styleClass="campo_telefone" style="width: 8%"/>
+				</div>	
+
+		</p:fieldset>
+		</div>
+		
+		
+		
+		<div align="left" style="padding-top:10px" id="proponeteComprador">
+			<p:fieldset legend="2º Proponente" id="proponente2" collapsed="#{!mbCorretor.comprador}">
+				<div class="campos_botoes_formulario">
+					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+					<h:outputText style="margin-left:0px; margin-top 15px;" value="Nome: " />
+					<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbCorretor.clienteReserva.nomeConjuge}" id="nome2" required="#{mbCorretor.comprador}" requiredMessage="Informar Nome" label="Nome" style="width: 52%;" maxlength="100"/>
+					
+					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+					<h:outputText style="margin-left:0px; margin-top 15px;" value="Data de Nascimento: " />
+					<p:inputMask mask="99/99/9999" converter="dataConverter" value="#{mbCorretor.clienteReserva.dataNascimentoConjuge}" id="dtNascimento2" required="#{mbCorretor.comprador}" requiredMessage="Informar Data de Nascimento" label="Data de Nascimento" style="width: 80px;" />
+			    </div>
+
+				<div class="campos_botoes_formulario">
+					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+					<h:outputText style="margin-left:0px; margin-top 15px;" value="RG: " />
+					<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbCorretor.clienteReserva.rgConjuge}" id="rg2" required="#{mbCorretor.comprador}" requiredMessage="Informar RG" label="RG" style="width: 8%;margin-top 15px;" maxlength="40"/>
+					
+					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+					<h:outputText style="margin-left:0px; margin-top 15px;" value="CPF: " />
+					<p:inputMask mask="999.999.999-99" converter="cpfConverter" value="#{mbCorretor.clienteReserva.cpfConjuge}" id="cpf2" required="#{mbCorretor.comprador}" requiredMessage="Informar CPF" label="CPF" style="width: 10%;"/>
+					
+					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+					<h:outputText style="margin-left:0px; margin-top 15px;" value="Estado Civil: " />
+					<p:selectOneMenu id="estadoCivil2" required="#{mbCorretor.comprador}" requiredMessage="Informar Estado Civil" styleClass="campo_comboBox" value="#{mbCorretor.clienteReserva.statusCivilConjuge}" >
+						<f:selectItem itemLabel="Selecione..." itemValue=""/>
+						<f:selectItems value="#{mbCorretor.opcoesEstadoCivil}" var="opcao" itemLabel="#{opcao.descricao}" itemValue="#{opcao.codigo}"  noSelectionValue="Selecione"  />
+					</p:selectOneMenu>
+								
+					<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+					<h:outputText style="margin-left:0px; margin-top 15px;" value="Sexo: " />
+					<p:selectOneMenu id="sexo2" required="#{mbCorretor.comprador}" requiredMessage="Informar Sexo" styleClass="campo_comboBox" value="#{mbCorretor.clienteReserva.sexoConjuge}" >
+						<f:selectItem itemLabel="Selecione..." itemValue=""/>
+						<f:selectItems value="#{mbCorretor.opcoesSexo}" var="opcao" itemLabel="#{opcao.descricao}" itemValue="#{opcao.codigo}"  noSelectionValue="Selecione"  />
+					</p:selectOneMenu>
+				</div>
+				
+				<div class="campos_botoes_formulario" >
+					<h:outputText style="margin-left:10px;margin-top 15px;"/>
+					<h:outputText style="margin-left:0px; margin-top: 15px;" value="E-Mail: " />
+					<p:inputText value="#{mbCorretor.clienteReserva.emailConjuge}" id="email2" label="Email" style="width: 32.2%;" validator="emailValidator" maxlength="60"/>
+					
+					<h:outputText style="margin-left:10px; margin-top 15px;" value="Endereço: " />
+					<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbCorretor.clienteReserva.enderecoConj.endereco}" id="endereco2" label="Endereço" style="width: 40.5%;" maxlength="50"/>
+				</div>
+									
+				<div class="campos_botoes_formulario">
+					<h:outputText style="margin-left:10px; margin-top 15px;" value="Complemento: " />
+					<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbCorretor.clienteReserva.enderecoConj.complemento}" id="complemento2" requiredMessage="Informar Complemento" label="Complemento" style="width: 23.3%;" maxlength="50"/>
+					
+					<h:outputText style="margin-left:10px; margin-top 15px;" value="Bairro: " />
+					<p:autoComplete completeMethod="#{mbAdmGeral.comandoAutoCompleteBairro()}" size="25" onblur="this.value = this.value.toUpperCase();" value="#{mbCorretor.clienteReserva.enderecoConj.bairro.descricaoBairro}" id="bairro2" label="Bairro" style="width: 25%;" maxlength="50"/>
+					
+					<h:outputText style="margin-left:10px; margin-top 15px;" value="CEP: " />
+					<p:inputMask mask="99.999-999" converter="cepConverter" value="#{mbCorretor.clienteReserva.enderecoConj.cep}" id="cep2" label="CEP" style="width: 17.5%;"/>
+				</div>
+
+				<div class="campos_botoes_formulario" style="width: 40%">
+					<h:outputText style="margin-left:8px;margin-top 15px;" />						
+					<h:outputText style="margin-left:1	0px; margin-top 15px;" value="Renda: " />
+					<p:inputText converter="valorConverter" value="#{mbCorretor.clienteReserva.rendaConjuge}" id="renda2" label="Renda" style="width: 15%;" maxlength="20" onkeypress="mascara(this, valor);" />
+
+					<h:outputText style="margin-left:12px; margin-top: 15px;" value="Possui FGTS: " />
+					<p:selectBooleanButton onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" value="#{mbCorretor.fgtsConj}" id="fgts2" styleClass="campo_comboBox"/>
+				</div>
+								
+				<div class="campos_botoes_formulario">
+					<h:outputText style="margin-left:10px;margin-top 15px;" value="Telefone Preferencial: " />
+					<p:inputMask mask="99" value="#{mbCorretor.clienteReserva.telefoneConj.dddPreferencial}" id="dddPreferencial2" maxlength="2" styleClass="campo_ddd" style="margin-left:13px;" title="Informe o DDD" />
+					
+					<p:inputMask mask="9999-9999" converter="telefoneConverter" value="#{mbCorretor.clienteReserva.telefoneConj.telefonePreferencial}" id="telPreferencial2" title="Informe o Nª de Telefone" label="Nome" styleClass="campo_telefone" style="width: 8%"/>
+				</div>	
+
+				<div class="campos_botoes_formulario">
+					<h:outputText style="margin-left:10px;margin-top 15px;" value="Telefone Recado: " />
+					<p:inputMask mask="99" value="#{mbCorretor.clienteReserva.telefoneConj.dddCoorporativo}" id="dddPreferencial22" maxlength="2" styleClass="campo_ddd" style="margin-left:43px;" title="Informe o DDD" />
+					
+					<p:inputMask mask="9999-9999" converter="telefoneConverter" value="#{mbCorretor.clienteReserva.telefoneConj.telefoneCoorporativo}" id="telPreferencial22" title="Informe o Nª de Telefone" label="Nome" styleClass="campo_telefone" style="width: 8%"/>
+				</div>	
+			
+				</p:fieldset>
+			</div>
+			</p:scrollPanel>
+		  </h:form>
+		</p:dialog>
+
+		<p:dialog resizable="false" id="modalVisualizar" showEffect="drop"
+				  hideEffect="fade" modal="true" maximizable="drop"
+				  minimizable="false" appendToBody="true" closable="false"
+		 		  dynamic="true" header="Observação do Cliente #{mbCorretor.cliente.nome}" widgetVar="visualizar" >	
+				  <h:form id="formVisualizar">
+					<div align="center">
+						<p:inputTextarea id="txt" autoResize="true" cols="75" maxlength="400" disabled="true" value="#{mbCorretor.reserva.comentario}"/>
+	
+						<p class="botao_alinhamento_direito" align="right">
+							<p:commandButton id="cancelar" value="Voltar" oncomplete="visualizar.hide()" ajax="false" action="#{mbCorretor.telaVisualizarVendas}" />
+	    				</p>	
+		       		</div>
+				  </h:form>
+		</p:dialog>
+
+	  </ui:define>
+	<f:facet name="footer" />
+</ui:composition>

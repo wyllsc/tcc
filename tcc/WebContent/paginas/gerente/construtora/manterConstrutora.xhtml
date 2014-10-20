@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/template/template-usuario.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<ui:define name="menu">
+		<p:menuitem value="Corretor" 				onclick="#{mbGerente.telaGerenciarCorretor()}" icon="ui-icon-home" url="/paginas/gerente/corretor/listarCorretor.jsf" />
+		<p:menuitem value="Construtora" 			onclick="#{mbGerente.telaGerenciarConstrutora()}" icon="ui-icon-home" url="/paginas/gerente/construtora/listarConstrutora.jsf" />
+	</ui:define>
+	
+	<ui:define name="corpo">
+		<h:form id="form">
+			<h:outputStylesheet name="index.css" library="css" />
+			<h:outputStylesheet name="template-interno-style.css" library="css" />
+			
+	    	<p:messages closable="true" id="mensagem" autoUpdate="true" escape="true"/>
+	    	
+			<p:panel header="#{mbGerente.acao} Construtora" styleClass="titulos_datatable">
+				<h:panelGrid style="width:87%;" id="grid">
+					<p:row>
+						<p:column>
+						<div align="left">	
+						<div class="campos_botoes_formulario">
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Nome: " />
+								<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbGerente.construtora.nomeConstrutora}" id="nome" required="true" requiredMessage="Informar Nome da Construtora" label="Nome" style="width: 52%;" maxlength="60"/>
+						</div>
+													
+							<div class="campos_botoes_formulario">
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Gerente Responsável: " />
+								<p:inputText value="#{mbGerente.construtora.nomeGerente}" id="nomeGerente" required="true" requiredMessage="Informar Gerente Responsável" label="Nome" style="width: 34.5%;" maxlength="60"/>
+				
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+								<h:outputText style="margin-left:0px; margin-top: 15px;" value="E-Mail: " />
+								<p:inputText value="#{mbGerente.construtora.emailGerente}" id="email" required="true" requiredMessage="Informar Email" label="Email" style="width: 32.2%;" validator="emailValidator" maxlength="80"/>
+							</div>
+			
+							<div class="campos_botoes_formulario">
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Endereço: " />
+								<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbGerente.construtora.endereco.endereco}" id="endereco" required="true" requiredMessage="Informar Endereço" label="Endereço" style="width: 49.5%;" maxlength="50"/>
+							</div>
+												
+							<div class="campos_botoes_formulario">
+								<h:outputText style="margin-left:15px; margin-top 15px;" value="Complemento: " />
+								<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbGerente.construtora.endereco.complemento}" id="complemento" requiredMessage="Informar Complemento" label="Complemento" style="width: 23.3%;" maxlength="50"/>
+								
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>						
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Bairro: " />
+								<p:autoComplete completeMethod="#{mbAdmGeral.comandoAutoCompleteBairro()}" size="25" onblur="this.value = this.value.toUpperCase();" value="#{mbGerente.construtora.endereco.bairro.descricaoBairro}" id="bairro" required="true" requiredMessage="Informar Bairro" label="Bairro" style="width: 25%;" maxlength="50"/>
+						    	
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>						
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="CEP: " />
+								<p:inputMask mask="99.999-999" converter="cepConverter" value="#{mbGerente.construtora.endereco.cep}" id="cep" required="true" requiredMessage="Informar CEP" label="CEP" style="width: 17.5%;"/>
+							</div>
+					
+											
+							<div class="campos_botoes_formulario">
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+								<h:outputText style="margin-left:0px;margin-top 15px;" value="Telefone Preferencial: " />
+								<p:inputMask mask="99" value="#{mbGerente.construtora.telefone.dddPreferencial}" id="dddPreferencial" maxlength="2" styleClass="campo_ddd" style="margin-left:13px;" title="Informe o DDD" required="true" requiredMessage="Informar DDD Preferêncial" />
+								
+								<p:inputMask mask="9999-9999" converter="telefoneConverter" value="#{mbGerente.construtora.telefone.telefonePreferencial}" id="telPreferencial" title="Informe o Nª de Telefone" required="true" requiredMessage="Informar Telefone Preferêncial" label="Nome" styleClass="campo_telefone"/>
+							</div>	
+						
+							<div class="campos_botoes_formulario">
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+								<h:outputText style="margin-left:0px;margin-top 15px;" value="Telefone Coorporativo: " />
+								<p:inputMask required="true" requiredMessage="Informar DDD Coorporativo" mask="99" value="#{mbGerente.construtora.telefone.dddCoorporativo}" id="dddCoorporativo" maxlength="2" styleClass="campo_ddd" style="margin-left:5px;" title="Informe o DDD" />
+								
+								<p:inputMask mask="9999-9999" converter="telefoneConverter" title="Informe o Nª de Telefone" value="#{mbGerente.construtora.telefone.telefoneCoorporativo}" id="telCooporativo" required="true" requiredMessage="Informar Telefone Coorporativo" label="Nome" styleClass="campo_telefone"/>
+							</div>
+								
+							</div>
+						</p:column>
+					</p:row>
+				</h:panelGrid>
+			</p:panel>
+	
+			<p class="botao_alinhamento_direito" align="right">
+				<p:commandButton ajax="false" immediate="true" id="voltarTelaPrincipal" action="#{mbGerente.comandoVoltarConstrutora}" value="Voltar" icon="ui-icon-arrowreturnthick-1-w" oncomplete="#{mbGerente.telaGerenciarConstrutora()}"/>
+				<p:commandButton ajax="false" id="saveOrUpdateGerente" action="#{mbGerente.comandoSalvarConstrutora}" value="#{mbGerente.acao}" icon="ui-icon-key" />
+			</p>
+			
+		</h:form>
+	  </ui:define>
+	<f:facet name="footer" />
+</ui:composition>

@@ -1,0 +1,74 @@
+#principal {
+	width: 100%;
+	margin: 0 auto;
+}
+
+#corpo {
+	font-size: 12px;
+	margin: auto;
+	width: 65%;
+}
+
+#header {
+	height: 118px;
+	background: url(../img/header.jpg) repeat;
+	margin-bottom: 2px;
+}
+
+#titulos_sgi {
+	font-size: 20px;
+	border: 1px solid #56585C;
+	background: #3D687C;
+	color: #F9F7F7;
+	font-weight: bold;
+}
+
+
+#header_logo_csempreendimento {
+	float: left;
+	margin: 10px;
+}
+
+#header_logo_sgi {
+	float: right;
+	margin: 5px;
+}
+
+.center_content {
+	padding: 5px;
+	padding-top: 60px;
+	width: 900px;
+	background: #FFF;
+	width: 900px;
+}
+
+#footer {
+	clear: both;
+	height: 25px;
+	background: url(../img/rodape.jpg) repeat;
+	float: left;
+	margin-top: 50px;
+	margin: auto;
+	width: 100%;
+	position:absolute;
+    bottom:0;	
+}
+
+#footer_p {
+	font-family: Tahoma, Geneva, sans-serif;
+	font-size: 12px;
+	color: white;
+	text-align: center;
+	padding-top: 8px;
+}
+
+.ui-growl {
+	right: 0px;
+	top: 122px;
+	font-size: 15px;
+}
+
+.ui-panelgrid td 
+{
+padding: 0px 0px;
+}

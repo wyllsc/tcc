@@ -1,0 +1,188 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/template/template-usuario.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+    xmlns:rich="http://richfaces.org/rich">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<ui:define name="menu">
+		<p:menuitem value="Corretor" 				onclick="#{mbGerente.telaGerenciarCorretor()}" icon="ui-icon-home" url="/paginas/gerente/corretor/listarCorretor.jsf" />
+		<p:menuitem value="Construtora" 			onclick="#{mbGerente.telaGerenciarConstrutora()}" icon="ui-icon-home" url="/paginas/gerente/construtora/listarConstrutora.jsf" />
+	</ui:define>	
+	
+	<ui:define name="corpo">
+		<h:form id="form">
+			<h:outputStylesheet name="index.css" library="css" />
+			<h:outputStylesheet name="template-interno-style.css" library="css" />
+			
+    		<p:messages closable="true" id="mensagem" for="mensagem" autoUpdate="true" escape="true"  />
+				
+			<p:panel id="panel" styleClass="titulos_datatable"  header="CORRETORES CADASTRADOS"  >
+			
+					<p:dataTable id="dtGerentes" value="#{mbGerente.listaGerentes}" 
+					var="var" emptyMessage="NENHUM CORRETOR CADASTRADO." paginator="true" rows="5"  
+                 	currentPageReportTemplate="TOTAL: #{mbGerente.contGerente}" 
+                 	paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" >
+		
+					<p:column headerText="NOME" style="width: 27%; font-weight: bold;" filterBy="#{var.nome}">
+						<h:outputText style="text-align:center;" value="#{var.nome.toLowerCase()}"/>
+					</p:column>
+		
+					<p:column headerText="CRECI" style="font-weight: bold; width:10%;text-align:center;" filterBy="#{var.creci}">
+						<h:outputText value="#{var.creci}" style="font-size: 11.3px" />
+					</p:column>
+					
+					<p:column headerText="TELEFONE" style="width: 15% ;text-align:center; font-weight: bold;" 
+					filterBy="#{var.telefone.telefonePreferencial} #{var.telefone.telefoneCoorporativo} #{var.telefone.telefoneRecado} #{var.telefone.dddCoorporativo} #{var.telefone.dddPreferencial} #{var.telefone.dddRecado}">
+						<div>
+							<h:outputText converter="dddConverter" value="#{var.telefone.dddPreferencial}" />
+							<h:outputText converter="telefoneConverter" value="#{var.telefone.telefonePreferencial}" />
+						</div>
+						
+						<div>
+							<h:outputText converter="dddConverter" value="#{var.telefone.dddCoorporativo}" />
+							<h:outputText converter="telefoneConverter" value="#{var.telefone.telefoneCoorporativo}" />
+						</div>
+						
+						<div>
+							<h:outputText converter="dddConverter" value="#{var.telefone.dddRecado}" />
+							<h:outputText converter="telefoneConverter" value="#{var.telefone.telefoneRecado}" />		
+						</div>
+					</p:column>
+					
+					<p:column headerText="SEXO" style="width: 2%; font-weight: bold;text-align:center" filterBy="#{var.sexo}">
+						<h:outputText value="#{var.descricaoStatus}"  />
+					</p:column>
+					
+					<p:column headerText="LOGIN" style="width: 15%; font-weight: bold; font-color: red;" filterBy="#{var.login}">
+						<h:outputText value="#{var.login.toUpperCase()}" />
+					</p:column>
+					
+					
+					<p:column headerText="OPÇÕES" style="font-weight: bold; width:11.3%; padding-bottom: 0px;text-align:center;" >
+					
+						<p:commandButton icon="ui-icon-search" oncomplete="visualizar.show()" title="Visualizar Corretor" action="#{mbGerente.comandoVisualizar}" >
+							<f:setPropertyActionListener value="#{var}" target="#{mbGerente.usuario}" />  
+						</p:commandButton>
+						
+						<p:commandButton icon="ui-icon-gear" title="Editar Corretor" action="#{mbGerente.telaCadastrarCorretor}" update="dtGerentes">
+							<f:setPropertyActionListener value="#{var}" target="#{mbGerente.usuario}" />  
+						</p:commandButton>  
+						  
+						
+						<p:commandButton icon="ui-icon-closethick" title="Excluir Corretor" oncomplete="popup.show()" update="dtGerentes">
+							<f:setPropertyActionListener value="#{var}" target="#{mbGerente.usuario}" />  
+						</p:commandButton>  
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			
+			<div align="right" class="botao_alinhamento_direito">			
+				<p:commandButton id="cadastrarGerente" ajax="false" immediate="true" action="#{mbGerente.telaCadastrarCorretor}" value="Novo" icon="ui-icon-circle-plus" update="form, panel" />
+			</div>
+			
+		</h:form>
+		
+		<p:dialog resizable="false" id="modalExcluir" showEffect="drop"
+				  hideEffect="fade" modal="true" maximizable="drop"
+				  minimizable="false" appendToBody="true" closable="false"
+		 		  dynamic="true" header="Deseja Realmente Excluir ?" widgetVar="popup" >	
+				  <h:form id="formDialog">
+					<div align="center">
+						<p:commandButton id="confirmar" value="Sim" oncomplete="popup.hide()" action="#{mbGerente.comandoExcluirCorretor}" update=":form" />
+			       		<p:commandButton id="cancelar" value="Não" onclick="popup.hide()" action="#{mbGerente.inicializa}"/>   
+		       		</div>
+				  </h:form>
+		</p:dialog>
+		
+		
+		<p:dialog resizable="false" id="modalVisualizar2" showEffect="slide"
+				  hideEffect="drop" modal="true" maximizable="drop"
+				  minimizable="false" appendToBody="true" closable="false"
+		 		  dynamic="true" header="Visualizar" widgetVar="visualizar" width="800" >	
+				  <h:form id="formDialogVisualizar2">
+			
+						<div class="campos_botoes_formulario">
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Nome: " />
+							<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbGerente.usuario.nome}" id="nome" required="true" requiredMessage="Nome não Informado" label="Nome" style="width: 52%;" maxlength="100" disabled="true"/>
+
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Data de Nascimento: " />
+							<p:inputMask disabled="true" mask="99/99/9999" converter="dataConverter" value="#{mbGerente.usuario.dataNascimento}" id="dtNascimento" required="true" requiredMessage="Data de Nascimento não Informado" label="Data de Nascimento" style="width: 16%;" />
+						</div>
+
+						<div class="campos_botoes_formulario">
+						
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Login: " />
+							<p:inputText disabled="true" onblur="this.value = this.value.toUpperCase();" value="#{mbGerente.usuario.login}" id="login" required="true" requiredMessage="Login não Informado" label="Login" style="width: 20%;margin-top 15px;" maxlength="40"/>
+							
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="CPF: " />
+							<p:inputMask disabled="true" mask="999.999.999-99" converter="cpfConverter" value="#{mbGerente.usuario.cpf}" id="cpf" required="true" requiredMessage="CPF não Informado" label="CPF" style="width: 20%;"/>
+					    	
+							<h:outputText style="margin-left:5px; margin-top: 15px;" value="E-Mail: " />
+							<p:inputText disabled="true" value="#{mbGerente.usuario.email}" id="email" required="true" requiredMessage="Email não Informado" label="Email" style="width: 34%;" validator="emailValidator" maxlength="60"/>
+						</div>
+						
+						<div class="campos_botoes_formulario" >
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Sexo: " />
+							<p:selectOneMenu disabled="true" id="sexo" required="true" requiredMessage="Sexo não Informado" styleClass="campo_comboBox" value="#{mbGerente.usuario.sexo}" >
+								<f:selectItem itemLabel="Selecione..." itemValue=""/>
+								<f:selectItems value="#{mbGerente.opcoesSexo}" var="opcao" itemLabel="#{opcao.descricao}" itemValue="#{opcao.codigo}"  noSelectionValue="Selecione"  />
+							</p:selectOneMenu>
+							
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Endereço: " />
+							<p:inputText disabled="true" onblur="this.value = this.value.toUpperCase();" value="#{mbGerente.usuario.endereco.endereco}" id="endereco" required="true" requiredMessage="Endereço não Informado" label="Endereço" style="width: 64%;" maxlength="50"/>
+						</div>
+											
+						<div class="campos_botoes_formulario">
+						
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Complemento: " />
+							<p:inputText disabled="true" onblur="this.value = this.value.toUpperCase();" value="#{mbGerente.usuario.endereco.complemento}" id="complemento" required="true" requiredMessage="Complemento não Informado" label="Complemento" style="width: 25%;" maxlength="50"/>
+												
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Bairro: " />
+							<p:inputText disabled="true" onblur="this.value = this.value.toUpperCase();" value="#{mbGerente.usuario.endereco.bairro.descricaoBairro}" id="bairro" required="true" requiredMessage="Bairro não Informado" label="Bairro" style="width: 25%;" maxlength="50"/>
+
+													
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="CEP: " />
+							<p:inputMask disabled="true" mask="99.999-999" converter="cepConverter" value="#{mbGerente.usuario.endereco.cep}" id="cep" required="true" requiredMessage="CEP não Informado" label="CEP" style="width: 16.5%;"/>
+						</div>
+						
+						<div class="campos_botoes_formulario">
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="CRECI: " />
+							<p:inputText disabled="true" onblur="this.value = this.value.toUpperCase();" value="#{mbGerente.usuario.creci}" id="creci" required="true" requiredMessage="Informar CRECI" label="Creci" style="width: 10%;" maxlength="20"/>
+						</div>
+			
+										
+						<div class="campos_botoes_formulario">
+							<h:outputText style="margin-left:5px;margin-top 15px;" value="Telefone Preferencial: " />
+							<p:inputMask disabled="true" mask="99" value="#{mbGerente.usuario.telefone.dddPreferencial}" id="dddPreferencial" maxlength="2" styleClass="campo_ddd" style="margin-left:13px;" title="Informe o DDD" required="true" requiredMessage="DDD Preferêncial não Informado" />
+					
+							<p:inputMask disabled="true" mask="9999-9999" converter="telefoneConverter" value="#{mbGerente.usuario.telefone.telefonePreferencial}" id="telPreferencial" title="Informe o Nª de Telefone" required="true" requiredMessage="Telefone Preferêncial não Informado" label="Nome" styleClass="campo_telefone"/>
+						</div>	
+					
+						<div class="campos_botoes_formulario">
+							<h:outputText style="margin-left:5px;margin-top 15px;" value="Telefone Coorporativo: " />
+							<p:inputMask disabled="true" required="true" requiredMessage="DDD Coorporativo não Informado" mask="99" value="#{mbGerente.usuario.telefone.dddCoorporativo}" id="dddCoorporativo" maxlength="2" styleClass="campo_ddd" style="margin-left:5px;" title="Informe o DDD" />
+														
+							<p:inputMask disabled="true" mask="9999-9999" converter="telefoneConverter" title="Informe o Nª de Telefone" value="#{mbGerente.usuario.telefone.telefoneCoorporativo}" id="telCooporativo" required="true" requiredMessage="Telefone Coorporativo não Informado" label="Nome" styleClass="campo_telefone"/>
+						</div>
+							
+						<div class="campos_botoes_formulario">
+							<h:outputText style="margin-left:5px;margin-top 15px;" value="Telefone Recado: " />
+							<p:inputMask disabled="true" mask="99" title="Informe o DDD" value="#{mbGerente.usuario.telefone.dddRecado}" id="dddRecado" maxlength="2" styleClass="campo_ddd" style="margin-left:42px;" required="true" requiredMessage="DDD para Recado não Informado"/>
+							
+							<p:inputMask disabled="true" mask="9999-9999" converter="telefoneConverter" value="#{mbGerente.usuario.telefone.telefoneRecado}" id="telRecado" required="true" requiredMessage="Telefone para Recado não Informado" label="Nome" styleClass="campo_telefone"/>
+						</div>	
+					
+						<p class="botao_alinhamento_direito" align="right">
+							<p:commandButton id="cancelar" value="Voltar" oncomplete="visualizar.hide()" ajax="false" action="#{mbGerente.inicializa}" />
+	    				</p>	
+				  </h:form>
+		</p:dialog>
+
+	  </ui:define>
+	<f:facet name="footer" />
+</ui:composition>

@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+      <h:form id="form">
+        <p:panel id="panel" styleClass="padding: 0"  header="IMÓVEIS CADASTRADOS - EMPREENDIMENTO --- ">
+        
+            <p:outputPanel id="dataTable">
+            
+                <p:dataTable var="car" value="#{carBean.imovels}" selection="#{carBean.selectedImovels}" rowKey="#{car.id}" >
+                    <p:column selectionMode="multiple"/>
+                    
+                    <p:column headerText="Modelo">
+                        #{car.id}
+                    </p:column>
+                    
+                    <p:column headerText="Ano">
+                        #{car.areaComum}
+                    </p:column>
+                </p:dataTable>
+                
+                <p:commandButton value="Teste" ajax="false" actionListener="#{carBean.imprimir()}"/>
+            </p:outputPanel>
+         </p:panel>
+      </h:form>
+    </h:body>
+</html>
+

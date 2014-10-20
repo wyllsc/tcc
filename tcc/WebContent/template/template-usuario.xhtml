@@ -1,0 +1,248 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+	<h:head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>SGI</title>
+		<style type="text/css">
+			body 
+			{
+				background-color: #eeeeee;
+				font-size: 12px
+			}
+			
+			#footer 
+			{
+				clear: both;
+				height: 25px;
+				background: url(../img/rodape.jpg) repeat;
+				float: left;
+				margin-top: 50px;
+				margin: auto;
+				width: 100%;
+				position:absolute;
+			    bottom:0;	
+			}
+			.ui-layout-unit .ui-layout-unit-content
+			{
+				padding: 0px;
+			}
+			.titulo
+			{
+					
+			}
+		</style>
+	</h:head>
+
+	<h:body>
+		<p:layout fullPage="true">
+			<p:layoutUnit position="north" header="SGI - Sistema Gerenciador de Imóveis" style="text-align: rigth; 	font-size: 15px; padding-top: 2px;">
+			</p:layoutUnit>
+	
+			<p:layoutUnit position="west" size="220" header="Olá #{sessionScope.usuarioSessao}">
+				<h:form id="formGeral">
+					<p:growl id="mensagemPerfil" for="mensagemPerfil" autoUpdate="true" globalOnly="true" life="45000" />
+			
+					<div align="center">
+						<h:graphicImage value="/resources/img/perfil/#{sessionScope.perfil}"  width="165" height="165" />			
+					</div>
+			
+					<p:menu style="width: 200px">
+
+						<p:submenu label="Perfil">
+							<p:menuitem value="Visualizar Dados" icon="ui-icon-circle-zoomout" oncomplete="visualizarDadosPerfil.show()" action="#{mbUsuario.buscaLogin}" >
+								<f:setPropertyActionListener target="#{mbUsuario.usuario}" value="#{sessionScope.usuario}" />
+							</p:menuitem>
+							<p:menuitem value="Atualizar Dados" icon="ui-icon-contact" oncomplete="alterarDadosPerfil.show()" action="#{mbUsuario.buscaLogin}">
+								<f:setPropertyActionListener target="#{mbUsuario.usuario}" value="#{sessionScope.usuario}" />
+							</p:menuitem> 
+							<p:menuitem value="Alterar Foto" icon="ui-icon-person" oncomplete="alterarFoto.show()" action="#{mbUsuario.buscaLogin}" >
+								<f:setPropertyActionListener target="#{mbUsuario.usuario}" value="#{sessionScope.usuario}" />
+							</p:menuitem>
+						</p:submenu>
+						
+						<p:submenu label="Menu">
+							<ui:insert name="menu" >
+<!-- 									<p:menuitem value="Login" icon="ui-icon-key"  /> -->
+<!-- 									<p:menuitem value="Fazer meu cadastro" icon="ui-icon-contact" /> -->
+							</ui:insert>
+						</p:submenu>
+					</p:menu>
+	
+					<p:menu style="width: 200px; position:absolute; bottom:5px;">
+							<p:menuitem value="SAIR" icon="ui-icon-closethick" ajax="false" onclick="#{mbUsuario.sair()}" url="/index.jsf" />
+					</p:menu>
+				</h:form>
+			</p:layoutUnit>
+			
+			<p:layoutUnit position="center" >
+				<ui:insert name="corpo" />
+			</p:layoutUnit>
+		</p:layout>
+	</h:body>
+	
+	<p:dialog resizable="false" id="modalVisualizarUsuario" showEffect="slide"
+				  hideEffect="drop" modal="true" maximizable="drop"
+				  minimizable="false" appendToBody="true" closable="true"
+		 		  dynamic="true" header="Visualizar Dados do Perfil" widgetVar="visualizarDadosPerfil" width="800">	
+				  <h:form id="formDialogVisualizarUsuario">
+			
+						<div class="campos_botoes_formulario">
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Nome: " />
+							<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbUsuario.usuario.nome}" id="nome" required="true" requiredMessage="Nome não Informado" label="Nome" style="width: 52%;" maxlength="100" disabled="true"/>
+
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Data de Nascimento: " />
+							<p:inputMask disabled="true" mask="99/99/9999" converter="dataConverter" value="#{mbUsuario.usuario.dataNascimento}" id="dtNascimento" required="true" requiredMessage="Data de Nascimento não Informado" label="Data de Nascimento" style="width: 16%;" />
+						</div>
+
+						<div class="campos_botoes_formulario">
+						
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Login: " />
+							<p:inputText disabled="true" onblur="this.value = this.value.toUpperCase();" value="#{mbUsuario.usuario.login}" id="login" required="true" requiredMessage="Login não Informado" label="Login" style="width: 20%;margin-top 15px;" maxlength="40"/>
+							
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="CPF: " />
+							<p:inputMask disabled="true" mask="999.999.999-99" converter="cpfConverter" value="#{mbUsuario.usuario.cpf}" id="cpf" required="true" requiredMessage="CPF não Informado" label="CPF" style="width: 20%;"/>
+					    	
+							<h:outputText style="margin-left:5px; margin-top: 15px;" value="E-Mail: " />
+							<p:inputText disabled="true" value="#{mbUsuario.usuario.email}" id="email" required="true" requiredMessage="Email não Informado" label="Email" style="width: 34%;" validator="emailValidator" maxlength="60"/>
+						</div>
+						
+						<div class="campos_botoes_formulario" >
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Sexo: " />
+							<p:selectOneMenu disabled="true" id="sexo" required="true" requiredMessage="Sexo não Informado" styleClass="campo_comboBox" value="#{mbUsuario.usuario.sexo}" >
+								<f:selectItem itemLabel="Selecione..." itemValue=""/>
+								<f:selectItems value="#{mbUsuario.opcoesSexo}" var="opcao" itemLabel="#{opcao.descricao}" itemValue="#{opcao.codigo}"  noSelectionValue="Selecione"  />
+							</p:selectOneMenu>
+							
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Endereço: " />
+							<p:inputText disabled="true" onblur="this.value = this.value.toUpperCase();" value="#{mbUsuario.usuario.endereco.endereco}" id="endereco" required="true" requiredMessage="Endereço não Informado" label="Endereço" style="width: 64%;" maxlength="50"/>
+						</div>
+											
+						<div class="campos_botoes_formulario">
+						
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Complemento: " />
+							<p:inputText disabled="true" onblur="this.value = this.value.toUpperCase();" value="#{mbUsuario.usuario.endereco.complemento}" id="complemento" required="true" requiredMessage="Complemento não Informado" label="Complemento" style="width: 25%;" maxlength="50"/>
+												
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Bairro: " />
+							<p:inputText disabled="true" onblur="this.value = this.value.toUpperCase();" value="#{mbUsuario.usuario.endereco.bairro.descricaoBairro}" id="bairro" required="true" requiredMessage="Bairro não Informado" label="Bairro" style="width: 25%;" maxlength="60"/>
+													
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="CEP: " />
+							<p:inputMask disabled="true" mask="99.999-999" converter="cepConverter" value="#{mbUsuario.usuario.endereco.cep}" id="cep" required="true" requiredMessage="CEP não Informado" label="CEP" style="width: 16.5%;"/>
+						</div>			
+										
+						<div class="campos_botoes_formulario">
+							<h:outputText style="margin-left:5px;margin-top 15px;" value="Telefone Preferencial: " />
+							<p:inputMask disabled="true" mask="99" value="#{mbUsuario.usuario.telefone.dddPreferencial}" id="dddPreferencial" maxlength="2" styleClass="campo_ddd" style="margin-left:13px;" title="Informe o DDD" required="true" requiredMessage="DDD Preferêncial não Informado" />
+					
+							<p:inputMask disabled="true" mask="9999-9999" converter="telefoneConverter" value="#{mbUsuario.usuario.telefone.telefonePreferencial}" id="telPreferencial" title="Informe o Nª de Telefone" required="true" requiredMessage="Telefone Preferêncial não Informado" label="Nome" styleClass="campo_telefone"/>
+						</div>	
+					
+						<div class="campos_botoes_formulario">
+							<h:outputText style="margin-left:5px;margin-top 15px;" value="Telefone Coorporativo: " />
+							<p:inputMask disabled="true" required="true" requiredMessage="DDD Coorporativo não Informado" mask="99" value="#{mbUsuario.usuario.telefone.dddCoorporativo}" id="dddCoorporativo" maxlength="2" styleClass="campo_ddd" style="margin-left:5px;" title="Informe o DDD" />
+														
+							<p:inputMask disabled="true" mask="9999-9999" converter="telefoneConverter" title="Informe o Nª de Telefone" value="#{mbUsuario.usuario.telefone.telefoneCoorporativo}" id="telCooporativo" required="true" requiredMessage="Telefone Coorporativo não Informado" label="Nome" styleClass="campo_telefone"/>
+						</div>
+						
+						<div class="campos_botoes_formulario">
+							<h:outputText style="margin-left:5px;margin-top 15px;" value="SENHA: " />
+							<p:inputText disabled="true" required="true" value="#{mbUsuario.usuario.senha}" id="senhaVis" style="margin-left:5px;" title="Informe a Senha" />
+						</div>
+							
+				  </h:form>
+		</p:dialog>
+	
+		<p:dialog resizable="true" id="editar" showEffect="slide"
+				  hideEffect="drop" modal="true" maximizable="drop"
+				  minimizable="false" appendToBody="true" closable="true"
+		 		  dynamic="true" header="Alterar Dados do Perfil" widgetVar="alterarDadosPerfil" width="800">	
+				  <h:form id="formDialogEditar">
+			
+						<div class="campos_botoes_formulario">
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Nome: " />
+							<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbUsuario.usuario.nome}" id="nome" required="true" requiredMessage="Nome não Informado" label="Nome" style="width: 52%;" maxlength="100"/>
+
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Data de Nascimento: " />
+							<p:inputMask mask="99/99/9999" converter="dataConverter" value="#{mbUsuario.usuario.dataNascimento}" id="dtNascimento" required="true" requiredMessage="Data de Nascimento não Informado" label="Data de Nascimento" style="width: 16%;" />
+						</div>
+
+						<div class="campos_botoes_formulario">
+						
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Login: " />
+							<p:inputText  onblur="this.value = this.value.toUpperCase();" value="#{mbUsuario.usuario.login}" id="login" required="true" requiredMessage="Login não Informado" label="Login" style="width: 20%;margin-top 15px;" maxlength="40"/>
+							
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="CPF: " />
+							<p:inputMask  mask="999.999.999-99" converter="cpfConverter" value="#{mbUsuario.usuario.cpf}" id="cpf" required="true" requiredMessage="CPF não Informado" label="CPF" style="width: 20%;"/>
+					    	
+							<h:outputText style="margin-left:5px; margin-top: 15px;" value="E-Mail: " />
+							<p:inputText  value="#{mbUsuario.usuario.email}" id="email" required="true" requiredMessage="Email não Informado" label="Email" style="width: 34%;" validator="emailValidator" maxlength="60"/>
+						</div>
+						
+						<div class="campos_botoes_formulario" >
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Sexo: " />
+							<p:selectOneMenu  id="sexo" required="true" requiredMessage="Sexo não Informado" styleClass="campo_comboBox" value="#{mbUsuario.usuario.sexo}" >
+								<f:selectItem itemLabel="Selecione..." itemValue=""/>
+								<f:selectItems value="#{mbUsuario.opcoesSexo}" var="opcao" itemLabel="#{opcao.descricao}" itemValue="#{opcao.codigo}"  noSelectionValue="Selecione"  />
+							</p:selectOneMenu>
+							
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Endereço: " />
+							<p:inputText  onblur="this.value = this.value.toUpperCase();" value="#{mbUsuario.usuario.endereco.endereco}" id="endereco" required="true" requiredMessage="Endereço não Informado" label="Endereço" style="width: 64%;" maxlength="50"/>
+						</div>
+											
+						<div class="campos_botoes_formulario">
+						
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Complemento: " />
+							<p:inputText  onblur="this.value = this.value.toUpperCase();" value="#{mbUsuario.usuario.endereco.complemento}" id="complemento" required="true" requiredMessage="Complemento não Informado" label="Complemento" style="width: 25%;" maxlength="50"/>
+												
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="Bairro: " />
+							<p:autoComplete completeMethod="#{mbUsuario.comandoAutoCompleteBairro()}" size="25" onblur="this.value = this.value.toUpperCase();" value="#{mbUsuario.usuario.endereco.bairro.descricaoBairro}" id="bairro" required="true" requiredMessage="Bairro não Informado" label="Bairro" style="width: 28%;" maxlength="60" />
+
+													
+							<h:outputText style="margin-left:5px; margin-top 15px;" value="CEP: " />
+							<p:inputMask  mask="99.999-999" converter="cepConverter" value="#{mbUsuario.usuario.endereco.cep}" id="cep" required="true" requiredMessage="CEP não Informado" label="CEP" style="width: 16.5%;"/>
+						</div>			
+										
+						<div class="campos_botoes_formulario">
+							<h:outputText style="margin-left:5px;margin-top 15px;" value="Telefone Preferencial: " />
+							<p:inputMask  mask="99" value="#{mbUsuario.usuario.telefone.dddPreferencial}" id="dddPreferencial" maxlength="2" styleClass="campo_ddd" style="margin-left:13px;" title="Informe o DDD" required="true" requiredMessage="DDD Preferêncial não Informado" />
+					
+							<p:inputMask  mask="9999-9999" converter="telefoneConverter" value="#{mbUsuario.usuario.telefone.telefonePreferencial}" id="telPreferencial" title="Informe o Nª de Telefone" required="true" requiredMessage="Telefone Preferêncial não Informado" label="Nome" styleClass="campo_telefone"/>
+						</div>	
+					
+						<div class="campos_botoes_formulario">
+							<h:outputText style="margin-left:5px;margin-top 15px;" value="Telefone Coorporativo: " />
+							<p:inputMask  required="true" requiredMessage="DDD Coorporativo não Informado" mask="99" value="#{mbUsuario.usuario.telefone.dddCoorporativo}" id="dddCoorporativo" maxlength="2" styleClass="campo_ddd" style="margin-left:5px;" title="Informe o DDD" />
+														
+							<p:inputMask  mask="9999-9999" converter="telefoneConverter" title="Informe o Nª de Telefone" value="#{mbUsuario.usuario.telefone.telefoneCoorporativo}" id="telCooporativo" required="true" requiredMessage="Telefone Coorporativo não Informado" label="Nome" styleClass="campo_telefone"/>
+						</div>
+		
+						<div class="campos_botoes_formulario">
+							<h:outputText style="margin-left:5px;margin-top 15px;" value="SENHA: " />
+							<p:inputText required="true" value="#{mbUsuario.usuario.senha}" id="senhaVis" style="margin-left:5px;" title="Informe a Senha" />
+						</div>	
+
+						
+						<p class="botao_alinhamento_direito" align="right">
+							<p:commandButton id="atualizar" value="Atualizar" oncomplete="alterar.hide()" ajax="false" action="#{mbUsuario.comandoUpdate}" />
+	    				</p>	
+				  </h:form>
+		</p:dialog>
+
+		<p:dialog resizable="false" id="alterarfoto" showEffect="slide"
+			  hideEffect="drop" modal="true" maximizable="drop"
+			  minimizable="false" appendToBody="true" closable="true"
+	 		  dynamic="true" header="Alterar Imagem do Perfil" widgetVar="alterarFoto" position="" >	
+                <h:form id="formFoto">
+                    <!-- 307200 = 300Kb -->
+                    <p:fileUpload id="upload" fileUploadListener="#{mbUsuario.uploadAction}" auto="false" mode="advanced" cancelLabel="Cancelar" uploadLabel="Carregar Foto" showButtons="false"
+                                  allowTypes="/(\.|\/)(gif|jpe?g|png)$/" label="Escolher arquivo" 
+                                  invalidFileMessage="Formato de arquivo inválido." invalidSizeMessage="A foto deve ter no máximo 300 KB."/>
+                    <p:commandButton actionListener="#{mbUsuario.alterarFoto()}" value="Salvar" icon="ui-icon-disk" oncomplete="alterarFoto.hide()" update=":formGeral">
+                    </p:commandButton>
+                </h:form>
+		</p:dialog>	
+</html>

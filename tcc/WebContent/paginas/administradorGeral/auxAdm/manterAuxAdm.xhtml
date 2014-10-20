@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/template/template-usuario.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<ui:define name="menu">
+		<p:menuitem value="Gerente" 				onclick="#{mbAdmGeral.telaGerenciarGerente()}" icon="ui-icon-clipboard" url="/paginas/administradorGeral/gerente/listarGerente.jsf" />
+		<p:menuitem value="Auxiliar Administrativo" onclick="#{mbAdmGeral.telaGerenciarAuxAdm()}" icon="ui-icon-clipboard" url="/paginas/administradorGeral/auxAdm/listarAuxAdm.jsf" />
+	</ui:define>
+	
+	<ui:define name="corpo">
+		<h:form id="form">
+			<h:outputStylesheet name="index.css" library="css" />
+			<h:outputStylesheet name="template-interno-style.css" library="css" />
+			
+	    	<p:messages closable="true" id="mensagem" autoUpdate="true" escape="true"/>
+	    	
+<!-- 			<p:panel styleClass="padding: 0;"> -->
+<!-- 				<p id="titulos_sgi" style="font-size: 14px;" align="right">Bem Vindo #{sessionScope.usuarioSessao}</p> -->
+<!-- 			</p:panel> -->
+		
+			<p:panel header="#{mbAdmGeral.acao} Auxiliar Administrativo" styleClass="titulos_datatable">
+				<h:panelGrid style="width:87%;" id="grid">
+					<p:row>
+						<p:column>
+						<div align="left">	
+								<div class="campos_botoes_formulario">
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Nome: " />
+								<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbAdmGeral.usuario.nome}" id="nome" required="true" requiredMessage="Informar Nome" label="Nome" style="width: 52%;" maxlength="100"/>
+						    							
+								
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Data de Nascimento: " />
+								<p:inputMask mask="99/99/9999" converter="dataConverter" value="#{mbAdmGeral.usuario.dataNascimento}" id="dtNascimento" required="true" requiredMessage="Informar Data de Nascimento" label="Data de Nascimento" style="width: 16%;" />
+							</div>
+	
+							<div class="campos_botoes_formulario">
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Login: " />
+								<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbAdmGeral.usuario.login}" id="login" required="true" requiredMessage="Informar Login" label="Login" style="width: 20%;margin-top 15px;" maxlength="40"/>
+								
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="CPF: " />
+								<p:inputMask mask="999.999.999-99" converter="cpfConverter" value="#{mbAdmGeral.usuario.cpf}" id="cpf" required="true" requiredMessage="Informar CPF" label="CPF" style="width: 20%;"/>
+								
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+								<h:outputText style="margin-left:0px; margin-top: 15px;" value="E-Mail: " />
+								<p:inputText value="#{mbAdmGeral.usuario.email}" id="email" required="true" requiredMessage="Informar Email" label="Email" style="width: 32.2%;" validator="emailValidator" maxlength="60"/>
+							</div>
+							
+							<div class="campos_botoes_formulario" >
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Sexo: " />
+								<p:selectOneMenu id="sexo" required="true" requiredMessage="Informar Sexo" styleClass="campo_comboBox" value="#{mbAdmGeral.usuario.sexo}" >
+									<f:selectItem itemLabel="Selecione..." itemValue=""/>
+									<f:selectItems value="#{mbAdmGeral.opcoesSexo}" var="opcao" itemLabel="#{opcao.descricao}" itemValue="#{opcao.codigo}"  noSelectionValue="Selecione"  />
+								</p:selectOneMenu>
+								
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Endereço: " />
+								<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbAdmGeral.usuario.endereco.endereco}" id="endereco" required="true" requiredMessage="Informar Endereço" label="Endereço" style="width: 66%;" maxlength="50"/>
+							</div>
+												
+							<div class="campos_botoes_formulario">
+								<h:outputText style="margin-left:15px; margin-top 15px;" value="Complemento: " />
+								<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbAdmGeral.usuario.endereco.complemento}" id="complemento" requiredMessage="Informar Complemento" label="Complemento" style="width: 23.3%;" maxlength="50"/>
+								
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>						
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="Bairro: " />
+								<p:autoComplete completeMethod="#{mbAdmGeral.comandoAutoCompleteBairro()}" size="25" onblur="this.value = this.value.toUpperCase();" value="#{mbAdmGeral.usuario.endereco.bairro.descricaoBairro}" id="bairro" required="true" requiredMessage="Informar Bairro" label="Bairro" style="width: 25%;" maxlength="50"/>
+								
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>						
+								<h:outputText style="margin-left:0px; margin-top 15px;" value="CEP: " />
+								<p:inputMask mask="99.999-999" converter="cepConverter" value="#{mbAdmGeral.usuario.endereco.cep}" id="cep" required="true" requiredMessage="Informar CEP" label="CEP" style="width: 17.5%;"/>
+							</div>
+					
+											
+							<div class="campos_botoes_formulario">
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+								<h:outputText style="margin-left:0px;margin-top 15px;" value="Telefone Preferencial: " />
+								<p:inputMask mask="99" value="#{mbAdmGeral.usuario.telefone.dddPreferencial}" id="dddPreferencial" maxlength="2" styleClass="campo_ddd" style="margin-left:13px;" title="Informe o DDD" required="true" requiredMessage="Informar DDD Preferêncial" />
+								
+								<p:inputMask mask="9999-9999" converter="telefoneConverter" value="#{mbAdmGeral.usuario.telefone.telefonePreferencial}" id="telPreferencial" title="Informe o Nª de Telefone" required="true" requiredMessage="Informar Telefone Preferêncial" label="Nome" styleClass="campo_telefone"/>
+							</div>	
+						
+							<div class="campos_botoes_formulario">
+								<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+								<h:outputText style="margin-left:0px;margin-top 15px;" value="Telefone Coorporativo: " />
+								<p:inputMask required="true" requiredMessage="Informar DDD Coorporativo" mask="99" value="#{mbAdmGeral.usuario.telefone.dddCoorporativo}" id="dddCoorporativo" maxlength="2" styleClass="campo_ddd" style="margin-left:10px;" title="Informe o DDD" />
+								
+								<p:inputMask mask="9999-9999" converter="telefoneConverter" title="Informe o Nª de Telefone" value="#{mbAdmGeral.usuario.telefone.telefoneCoorporativo}" id="telCooporativo" required="true" requiredMessage="Informar Telefone Coorporativo" label="Nome" styleClass="campo_telefone"/>
+							</div>
+								
+							</div>		
+						</p:column>
+					</p:row>
+				</h:panelGrid>
+			</p:panel>
+	
+			<p class="botao_alinhamento_direito" align="right">
+				<p:commandButton ajax="false" immediate="true" id="voltarTelaPrincipal" action="#{mbAdmGeral.comandoVoltarAuxAdm}" value="Voltar" icon="ui-icon-arrowreturnthick-1-w" oncomplete="#{mbAdmGeral.telaGerenciarAuxAdm()}"/>
+				<p:commandButton ajax="false" id="saveOrUpdateAuxAdm" action="#{mbAdmGeral.comandoSalvarAuxAdm}" value="#{mbAdmGeral.acao}" icon="ui-icon-key"  />
+			</p>
+
+		</h:form>
+	  </ui:define>
+	<f:facet name="footer" />
+</ui:composition>

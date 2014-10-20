@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link href="./resources/css/template-externo-style.css" rel="stylesheet" type="text/css" />
+	<ui:insert name="titulo">
+		<title>SGI - CS</title>
+	</ui:insert>
+</h:head>
+
+<h:body>
+	<p:ajaxStatus
+		style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+		<f:facet name="start">
+			<p:graphicImage value="/resources/img/loading.gif" />
+		</f:facet>
+
+		<f:facet name="complete">
+			<h:outputText value="" />
+		</f:facet>
+	</p:ajaxStatus>
+
+	<div id="principal">
+		<h:form>
+			<div id="header">
+				<ui:insert name="header">
+	
+						<div id="header_logo_csempreendimento">
+							<h:graphicImage value="./resources/img/logocse1.jpg" alt="Logo CS Empreendimentos" height= "95" title="Empresa CS Empreendimentos" />
+						</div>
+	
+						<div id="header_logo_sgi">
+								<h:graphicImage value="./resources/img/logoSGI.jpg" alt="Logo SGI" width="270" height="99" title="Págiga inicial do SGI" />
+						</div>
+	
+				</ui:insert>
+			</div>
+		</h:form>
+	
+		<div id="corpo" class="center_content">
+			<ui:insert name="corpo">Content</ui:insert>
+		</div>
+	
+		<div id="footer">
+			<ui:insert name="footer">
+				<div id="footer_p">SGI - Todos os direitos reservados</div>
+			</ui:insert>
+		</div>
+
+	</div>
+</h:body>
+</html>

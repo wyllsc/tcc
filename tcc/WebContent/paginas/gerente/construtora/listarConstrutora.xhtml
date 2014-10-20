@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/template/template-usuario.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+    xmlns:rich="http://richfaces.org/rich">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<ui:define name="menu">
+		<p:menuitem value="Corretor" 		onclick="#{mbGerente.telaGerenciarCorretor()}" icon="ui-icon-home" url="/paginas/gerente/corretor/listarCorretor.jsf" />
+		<p:menuitem value="Construtora" 	onclick="#{mbGerente.telaGerenciarConstrutora()}" icon="ui-icon-home" url="/paginas/gerente/construtora/listarConstrutora.jsf" />
+	</ui:define>
+	
+	<ui:define name="corpo">
+		<h:form id="form">
+			<h:outputStylesheet name="index.css" library="css" />
+			<h:outputStylesheet name="template-interno-style.css" library="css" />
+			
+	    	<p:messages closable="true" id="mensagem" autoUpdate="true" escape="true"/>
+						
+			<p style="padding-top:10px" />
+			
+			<p:panel id="panel" styleClass="titulos_datatable"  header="CONSTRUTORAS CADASTRADAS"  >
+			
+					<p:dataTable id="dtGerentes" value="#{mbGerente.listaConstrutora}" 
+					var="var" emptyMessage="NENHUMA CONSTRUTORA CADASTRADA." paginator="true" rows="5"  
+                 	currentPageReportTemplate="TOTAL: #{mbGerente.contConstrutora}" 
+                 	paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" >
+
+					<p:column headerText="CONSTRUTORA" style="width: 15%; font-weight: bold; font-color: red;" filterBy="#{var.nomeConstrutora}" filterMatchMode="contains">
+						<h:outputText value="#{var.nomeConstrutora}" />
+					</p:column>
+		
+					<p:column headerText="GERENTE RESPONSÁVEL" style="width: 15%; font-weight: bold;" filterBy="#{var.nomeGerente}" filterMatchMode="contains">
+						<h:outputText style="text-align:center;" value="#{var.nomeGerente}"/>
+					</p:column>
+		
+					<p:column headerText="TELEFONE" style="width: 13%; font-weight: bold;text-align:center" filterMatchMode="contains"
+					filterBy="#{var.telefone.telefonePreferencial} #{var.telefone.telefoneCoorporativo} #{var.telefone.telefoneRecado} #{var.telefone.dddCoorporativo} #{var.telefone.dddPreferencial} #{var.telefone.dddRecado}">
+						<div>
+							<h:outputText converter="dddConverter" value="#{var.telefone.dddPreferencial}" />
+							<h:outputText converter="telefoneConverter" value="#{var.telefone.telefonePreferencial}" />
+						</div>
+						
+						<div>
+							<h:outputText converter="dddConverter" value="#{var.telefone.dddCoorporativo}" />
+							<h:outputText converter="telefoneConverter" value="#{var.telefone.telefoneCoorporativo}" />
+						</div>
+					</p:column>
+					
+					<p:column headerText="EMAIL" style="font-weight: bold; width:25%;" filterBy="#{var.emailGerente}" filterMatchMode="contains">
+						<h:outputText value="#{var.emailGerente}" style="font-size: 11.3px" />
+					</p:column>
+			
+					<p:column headerText="EMPREENDIMENTOS" style="text-align:center; width: 17% ; padding: 0px; font-weight: bold; margin: 0px;" >
+						<p:dataList value="#{var.listEmpreendimentos}" var="emp" itemType="square">
+							<h:outputText value=" #{emp.nomeEmpreendimento}" style="font-size: 10px"/>
+							<p:separator />
+						</p:dataList>
+					</p:column>
+					
+					<p:column headerText="OPÇÕES" style="font-weight: bold; width:11.3%; padding-bottom: 0px;text-align:center;" >
+						<p:commandButton icon="ui-icon-wrench" title="Gerenciar Empreendimento" action="#{mbGerente.telaGerenciarEmpreendimento}" update="dtGerentes">
+							<f:setPropertyActionListener value="#{var}" target="#{mbGerente.construtora}" />  
+						</p:commandButton>
+						
+						<p:commandButton icon="ui-icon-gear" title="Editar Construtora" action="#{mbGerente.telaCadastrarConstrutora}" update="dtGerentes">
+							<f:setPropertyActionListener value="#{var}" target="#{mbGerente.construtora}" />  
+						</p:commandButton>  
+						  
+						<p:commandButton icon="ui-icon-closethick" title="Excluir Construtora" oncomplete="popup.show()" update="dtGerentes">
+							<f:setPropertyActionListener value="#{var}" target="#{mbGerente.construtora}" />  
+						</p:commandButton>  
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			
+			<div align="right" class="botao_alinhamento_direito">			
+				<p:commandButton id="cadastrarConstrutora" ajax="false" immediate="true" action="#{mbGerente.telaCadastrarConstrutora}" value="Novo" icon="ui-icon-circle-plus" update="form, panel" />
+			</div>
+			
+		</h:form>
+		
+		<p:dialog resizable="false" id="modalExcluir" showEffect="drop"
+				  hideEffect="fade" modal="true" maximizable="drop"
+				  minimizable="false" appendToBody="true" closable="false"
+		 		  dynamic="true" header="Deseja Realmente Excluir ?" widgetVar="popup" >	
+				  <h:form id="formDialog">
+					<div align="center">
+						<p:commandButton id="confirmar" value="Sim" oncomplete="popup.hide()" action="#{mbGerente.comandoExcluirConstrutora}" update=":form"/>
+			       		<p:commandButton id="cancelar" value="Não" onclick="popup.hide()" action="#{mbGerente.inicializa}"/>   
+		       		</div>
+				  </h:form>
+		</p:dialog>
+		
+	  </ui:define>
+	<f:facet name="footer" />
+</ui:composition>

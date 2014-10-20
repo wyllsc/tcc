@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/template/template-usuario.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core" 
+    xmlns:rich="http://richfaces.org/rich">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<ui:define name="menu">
+		<p:menuitem value="Corretor" 	onclick="#{mbGerente.telaGerenciarCorretor()}" icon="ui-icon-home" url="/paginas/gerente/corretor/listarCorretor.jsf" />
+		<p:menuitem value="Construtora" onclick="#{mbGerente.telaGerenciarConstrutora()}" icon="ui-icon-home" url="/paginas/gerente/construtora/listarConstrutora.jsf" />
+	</ui:define>	
+	
+	<ui:define name="corpo">
+			<h:outputStylesheet name="index.css" library="css" />
+			<h:outputStylesheet name="template-interno-style.css" library="css" />
+
+			<h:form id="formCadastro">
+	    	<p:messages closable="true" id="mensagem" autoUpdate="true" escape="true"/>
+	    	<p style="padding-top:10px" />
+				<div align="center">
+					<p:panel id="panelCadastro" styleClass="titulos_datatable"  header="#{mbGerente.acao.toUpperCase()} EMPREENDIMENTO" toggleable="true" collapsed="#{mbGerente.acao.equals('Cadastrar')}" style="width:50% "  >
+						<div class="campos_botoes_formulario">
+							<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+							<h:outputText style="margin-left:0px; margin-top 15px;" value="Nome: " />
+							<p:inputText onblur="this.value = this.value.toUpperCase();" value="#{mbGerente.empreendimento.nomeEmpreendimento}" id="nome" required="true" requiredMessage="Informar Nome" label="Nome" style="width: 66%;" maxlength="100"/>
+						</div>
+							
+						<div class="campos_botoes_formulario">
+							<h:outputText style="margin-left:5px;margin-top 15px; color: Red;" value="*"/>
+							<h:outputText style="margin-left:0px; margin-top 15px;" value="Região: " />
+							<p:autoComplete completeMethod="#{mbAdmGeral.comandoAutoCompleteRegiao()}" size="60" onblur="this.value = this.value.toUpperCase();" value="#{mbGerente.empreendimento.regiao}" id="regiao" required="true" requiredMessage="Informar Regiao" label="Regiao" style="width: 65.2%;" maxlength="60"/>
+						</div>
+						<p class="botao_alinhamento_direito" align="right">
+							<p:commandButton ajax="false" id="saveOrUpdateGerente" action="#{mbGerente.comandoSalvarEmpreendimento}" value="#{mbGerente.acao}" icon="ui-icon-key" update=":form"/>
+						</p>
+					</p:panel>
+				</div>
+			</h:form>	
+				
+				<p style="padding-top:10px" />
+			
+			<h:form id="form">
+				<p:panel id="panel" styleClass="titulos_datatable"  header="EMPREENDIMENTOS CADASTRADOS DA CONSTRUTORA:  #{mbGerente.construtora.nomeConstrutora.toUpperCase()}" toggleable="true" >
+			
+					<p:dataTable id="dt" value="#{mbGerente.listaEmpreendimento}" 
+					var="var" emptyMessage="NENHUM EMPREEENDIMENTO CADASTRADO." paginator="true" rows="5"  
+                 	currentPageReportTemplate="TOTAL: #{mbGerente.contEmpreendimento}" 
+                 	paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" >
+
+					<p:column headerText="NOME" style="width: 15%; font-weight: bold; font-color: red;" filterBy="#{var.nomeEmpreendimento}">
+						<h:outputText value="#{var.nomeEmpreendimento}" />
+					</p:column>
+		
+					<p:column headerText="REGIÃO" style="width: 15%; font-weight: bold;" filterBy="#{var.regiao}">
+						<h:outputText value="#{var.regiao}"/>
+					</p:column>
+		
+					<p:column headerText="UNIDADES" style="width: 15% ;text-align:center; font-weight: bold;" filterBy="">
+					    <h:outputText value="Não Possui Imóveis" rendered="#{var.contImovelEmpreendimento == 0}"/>
+   					    <h:outputText value="#{var.contImovelEmpreendimento} Imóveis Cadastrados" rendered="#{var.contImovelEmpreendimento != 0}"/>
+					</p:column>
+					
+					<p:column headerText="OPÇÕES" style="font-weight: bold; width:11.3%; padding-bottom: 0px;text-align:center;" >
+						<p:commandButton icon="ui-icon-wrench" oncomplete="" title="Gerenciar Imóveis" action="#{mbGerente.telaGerenciarImoveis}" >
+							<f:setPropertyActionListener value="#{var}" target="#{mbGerente.empreendimento}" />  
+						</p:commandButton>
+						
+						<p:commandButton icon="ui-icon-gear" title="Editar Empreendimento" action="#{mbGerente.comandoAlterarLabel}" update=":formCadastro">
+							<f:setPropertyActionListener value="#{var}" target="#{mbGerente.empreendimento}" />  
+						</p:commandButton>  
+						
+						<p:commandButton icon="ui-icon-closethick" title="Excluir Empreendimento" oncomplete="popup.show()" update=":form:dt">
+							<f:setPropertyActionListener value="#{var}" target="#{mbGerente.empreendimento}" />  
+						</p:commandButton>  
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			
+			<p class="botao_alinhamento_direito" align="right">
+				<p:commandButton ajax="false" immediate="true" id="voltarTelaPrincipal" action="#{mbGerente.comandoVoltarConstrutora}" value="Voltar" icon="ui-icon-arrowreturnthick-1-w" oncomplete="#{mbGerente.telaGerenciarConstrutora()}"/>
+			</p>
+		</h:form>
+
+		<p:dialog resizable="false" id="modalExcluir" showEffect="drop"
+				  hideEffect="fade" modal="true" maximizable="drop"
+				  minimizable="false" appendToBody="true" closable="false"
+		 		  dynamic="true" header="Deseja Realmente Excluir ?" widgetVar="popup" >	
+				<h:form id="formDialog">
+					<div align="center">
+						<p:commandButton ajax="false" id="confirmar" value="Sim" oncomplete="popup.hide()" action="#{mbGerente.comandoExcluirEmpreendimento}" update=":form:dt"/>
+			       		<p:commandButton id="cancelar" value="Não" onclick="popup.hide()" action="#{mbGerente.inicializa}"/>   
+		       		</div>
+				</h:form>
+		</p:dialog>
+
+	  </ui:define>
+	<f:facet name="footer" />
+</ui:composition>
